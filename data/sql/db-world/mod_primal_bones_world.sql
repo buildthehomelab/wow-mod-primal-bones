@@ -290,8 +290,8 @@ INSERT INTO `creature_questender` (`id`, `quest`) VALUES
 -- rare elite; same health, damage and abilities). One entry for each of retail's five striped
 -- primal devilsaur skins, so each drops its own mount:
 --   9506001  dark  (display 247249): Cobalt Primordial Direhorn
---   9506005  blue  (display 247271): Cobalt Pterrordax
---   9506006  green (display 247272): Jade Pterrordax
+--   9506005  blue  (display 247271): Zandalari Direhorn
+--   9506006  green (display 247272): Savage Raptor
 --   9506007  pale  (display 247273): Swift Albino Raptor
 --   9506008  brown (display 276972): Golden Primal Direhorn
 -- Skinning gives what King Mosh's corpse gives.
@@ -477,8 +477,8 @@ INSERT INTO `creature_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `Q
 (9506004, 1963, 0, 100, 1, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Jade) - Primal Bone'),
 (9506004, 9506000, 9506000, 50, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Jade) - Primal Egg'),
 (9506001, 400533, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (dark) - Cobalt Primordial Direhorn'),
-(9506005, 401058, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (blue) - Cobalt Pterrordax'),
-(9506006, 402084, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (green) - Jade Pterrordax'),
+(9506005, 401038, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (blue) - Zandalari Direhorn'),
+(9506006, 400418, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (green) - Savage Raptor'),
 (9506007, 401180, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (pale) - Swift Albino Raptor'),
 (9506008, 400545, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (brown) - Golden Primal Direhorn'),
 (9506002, 400535, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Slate Primordial Direhorn'),

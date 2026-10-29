@@ -35,8 +35,9 @@ Raptor**.
 - **Tarborn Tyrants**, rare elite primal devilsaurs that claw their way out of the tar on one of
   three spots around the pits, three hours after the last one was killed. There are five, one for
   each of retail's striped primal devilsaur skins, and whichever skin comes up drops its own
-  mount (10%): dark the Cobalt Primordial Direhorn, blue the Cobalt Pterrordax, green the Jade
-  Pterrordax, pale the Swift Albino Raptor, brown the Golden Primal Direhorn. They fight like King
+  mount (10%): dark the Cobalt Primordial Direhorn, blue the Zandalari Direhorn, green the Savage
+  Raptor, pale the Swift Albino Raptor, brown the Golden Primal Direhorn. All ground mounts, like
+  the beasts that drop them. They fight like King
   Mosh and also drop 200-250 bones and an egg.
 - **Zandalari Warbringers**: rare elite Zandalari riding Slate, Amber or Jade Primordial
   Direhorns. One is out at a time, on one of five spots across the crater; an hour after a kill
