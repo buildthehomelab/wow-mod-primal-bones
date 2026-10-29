@@ -11,7 +11,9 @@
 --   quests 9506000.. The Ten-Thousandth Bone (9,999 bones: Bone-White Primal Raptor), and 15 more
 --   9506015          that trade bones for the other primal raptors, a direhorn and pets. Each can
 --                    be done once. They all take bones from the same pile.
---   creature 9506001 Tarborn Tyrant, rare elite primal devilsaur; three spawn spots, one at a time.
+--   creatures        Tarborn Tyrant, rare elite primal devilsaur, one entry per striped skin, each
+--   9506001, 9506005 with its own mount; three spawn spots, one Tyrant at a time.
+--   ..9506008
 --   creature 9506002 Zandalari Warbringer on a Slate, Amber or Jade Primordial Direhorn, rare
 --   ..9506004        elite; five spawn spots and three colours, one Warbringer at a time.
 --
@@ -20,7 +22,7 @@
 --
 -- Needs the item and creature rows of wow-mod-retail-collection (the rewards, 400000+ and 410000+)
 -- and the looks of wow-mod-retail-library (the direhorns the Warbringers ride and the Tyrant's
--- striped devilsaur, displays 247249/247271/247272/247273).
+-- striped devilsaur, displays 247249/247271/247272/247273/276972).
 --
 -- This module's ids: creature, quest, npc_text, gossip menu, reference loot, pool and spawn guids
 -- 9506000-9506099. Stock rows changed: the three repurposed items above, and new loot rows on 22
@@ -284,19 +286,30 @@ INSERT INTO `creature_questender` (`id`, `quest`) VALUES
 -- The rares
 -- ---------------------------------------------------------------------------------------------
 
--- Tarborn Tyrant: a primal devilsaur that crawled out of the tar, built like King Mosh (rank 2,
--- rare elite; same health, damage and abilities). Each spawn wears one of four of retail's
--- striped primal devilsaur skins (dark, blue, green, pale; a creature takes at most four looks). Skinning gives what King Mosh's corpse gives.
-DELETE FROM `creature_template` WHERE `entry` = 9506001;
+-- Tarborn Tyrants: primal devilsaurs that crawled out of the tar, built like King Mosh (rank 2,
+-- rare elite; same health, damage and abilities). One entry for each of retail's five striped
+-- primal devilsaur skins, so each drops its own mount:
+--   9506001  dark  (display 247249): Cobalt Primordial Direhorn
+--   9506005  blue  (display 247271): Cobalt Pterrordax
+--   9506006  green (display 247272): Jade Pterrordax
+--   9506007  pale  (display 247273): Swift Albino Raptor
+--   9506008  brown (display 276972): Golden Primal Direhorn
+-- Skinning gives what King Mosh's corpse gives.
+DELETE FROM `creature_template` WHERE `entry` IN (9506001, 9506005, 9506006, 9506007, 9506008);
 INSERT INTO `creature_template` (`entry`, `name`, `minlevel`, `maxlevel`, `faction`, `speed_walk`, `speed_run`, `rank`, `DamageModifier`, `BaseAttackTime`, `RangeAttackTime`, `unit_class`, `unit_flags`, `unit_flags2`, `type`, `lootid`, `skinloot`, `mingold`, `maxgold`, `AIName`, `HealthModifier`, `RegenHealth`) VALUES
-(9506001, 'Tarborn Tyrant', 61, 61, 14, 1.6, 1.71429, 2, 8.5, 1500, 2000, 1, 64, 2048, 1, 9506001, 6584, 3975, 5196, 'SmartAI', 20, 1);
+(9506001, 'Tarborn Tyrant', 61, 61, 14, 1.6, 1.71429, 2, 8.5, 1500, 2000, 1, 64, 2048, 1, 9506001, 6584, 3975, 5196, 'SmartAI', 20, 1),
+(9506005, 'Tarborn Tyrant', 61, 61, 14, 1.6, 1.71429, 2, 8.5, 1500, 2000, 1, 64, 2048, 1, 9506005, 6584, 3975, 5196, 'SmartAI', 20, 1),
+(9506006, 'Tarborn Tyrant', 61, 61, 14, 1.6, 1.71429, 2, 8.5, 1500, 2000, 1, 64, 2048, 1, 9506006, 6584, 3975, 5196, 'SmartAI', 20, 1),
+(9506007, 'Tarborn Tyrant', 61, 61, 14, 1.6, 1.71429, 2, 8.5, 1500, 2000, 1, 64, 2048, 1, 9506007, 6584, 3975, 5196, 'SmartAI', 20, 1),
+(9506008, 'Tarborn Tyrant', 61, 61, 14, 1.6, 1.71429, 2, 8.5, 1500, 2000, 1, 64, 2048, 1, 9506008, 6584, 3975, 5196, 'SmartAI', 20, 1);
 
-DELETE FROM `creature_template_model` WHERE `CreatureID` = 9506001;
+DELETE FROM `creature_template_model` WHERE `CreatureID` IN (9506001, 9506005, 9506006, 9506007, 9506008);
 INSERT INTO `creature_template_model` (`CreatureID`, `Idx`, `CreatureDisplayID`, `DisplayScale`, `Probability`, `VerifiedBuild`) VALUES
 (9506001, 0, 247249, 1, 1, 0),
-(9506001, 1, 247271, 1, 1, 0),
-(9506001, 2, 247272, 1, 1, 0),
-(9506001, 3, 247273, 1, 1, 0);
+(9506005, 0, 247271, 1, 1, 0),
+(9506006, 0, 247272, 1, 1, 0),
+(9506007, 0, 247273, 1, 1, 0),
+(9506008, 0, 276972, 1, 1, 0);
 
 -- Zandalari Warbringers: the Zandalar Enforcer's model and gear, mounted on a Primordial
 -- Direhorn from the retail library (creature_template_addon.mount). One entry per colour, so
@@ -328,10 +341,18 @@ INSERT INTO `creature_template_addon` (`entry`, `path_id`, `mount`, `bytes1`, `b
 
 -- Both announce themselves to the whole crater when they appear (TextRange 2: zone), so players
 -- know one is up somewhere. Type 16: monster emote.
-DELETE FROM `creature_text` WHERE `CreatureID` BETWEEN 9506001 AND 9506004;
+DELETE FROM `creature_text` WHERE `CreatureID` BETWEEN 9506001 AND 9506008;
 INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `BroadcastTextId`, `TextRange`, `comment`) VALUES
 (9506001, 0, 0, 'The Lakkari tar heaves, and something enormous claws its way out of the pit!', 16, 0, 100, 0, 0, 0, 0, 2, 'mod-primal-bones: Tarborn Tyrant spawn'),
 (9506001, 1, 0, '%s roars, and the whole crater goes quiet.', 16, 0, 100, 0, 0, 0, 0, 0, 'mod-primal-bones: Tarborn Tyrant aggro'),
+(9506005, 0, 0, 'The Lakkari tar heaves, and something enormous claws its way out of the pit!', 16, 0, 100, 0, 0, 0, 0, 2, 'mod-primal-bones: Tarborn Tyrant spawn'),
+(9506005, 1, 0, '%s roars, and the whole crater goes quiet.', 16, 0, 100, 0, 0, 0, 0, 0, 'mod-primal-bones: Tarborn Tyrant aggro'),
+(9506006, 0, 0, 'The Lakkari tar heaves, and something enormous claws its way out of the pit!', 16, 0, 100, 0, 0, 0, 0, 2, 'mod-primal-bones: Tarborn Tyrant spawn'),
+(9506006, 1, 0, '%s roars, and the whole crater goes quiet.', 16, 0, 100, 0, 0, 0, 0, 0, 'mod-primal-bones: Tarborn Tyrant aggro'),
+(9506007, 0, 0, 'The Lakkari tar heaves, and something enormous claws its way out of the pit!', 16, 0, 100, 0, 0, 0, 0, 2, 'mod-primal-bones: Tarborn Tyrant spawn'),
+(9506007, 1, 0, '%s roars, and the whole crater goes quiet.', 16, 0, 100, 0, 0, 0, 0, 0, 'mod-primal-bones: Tarborn Tyrant aggro'),
+(9506008, 0, 0, 'The Lakkari tar heaves, and something enormous claws its way out of the pit!', 16, 0, 100, 0, 0, 0, 0, 2, 'mod-primal-bones: Tarborn Tyrant spawn'),
+(9506008, 1, 0, '%s roars, and the whole crater goes quiet.', 16, 0, 100, 0, 0, 0, 0, 0, 'mod-primal-bones: Tarborn Tyrant aggro'),
 (9506002, 0, 0, 'War drums echo across the crater. A Zandalari Warbringer rides through Un''Goro!', 16, 0, 100, 0, 0, 0, 0, 2, 'mod-primal-bones: Warbringer spawn'),
 (9506002, 1, 0, 'Da Zandalar take what dey want!', 12, 0, 100, 0, 0, 0, 0, 0, 'mod-primal-bones: Warbringer aggro'),
 (9506003, 0, 0, 'War drums echo across the crater. A Zandalari Warbringer rides through Un''Goro!', 16, 0, 100, 0, 0, 0, 0, 2, 'mod-primal-bones: Warbringer spawn'),
@@ -341,13 +362,33 @@ INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Lan
 
 -- Tyrant: King Mosh's three attacks, plus the two lines above. Warbringers: Cleave, Mortal
 -- Strike and a direhorn Thunderclap.
-DELETE FROM `smart_scripts` WHERE `source_type` = 0 AND `entryorguid` BETWEEN 9506001 AND 9506004;
+DELETE FROM `smart_scripts` WHERE `source_type` = 0 AND `entryorguid` BETWEEN 9506001 AND 9506008;
 INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `event_param5`, `event_param6`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_param4`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
 (9506001, 0, 0, 0, 11, 0, 100, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - On Respawn - Say Line 0'),
 (9506001, 0, 1, 0, 4, 0, 100, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - On Aggro - Say Line 1'),
 (9506001, 0, 2, 0, 0, 0, 100, 0, 10000, 10000, 12000, 20000, 0, 0, 11, 14100, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - In Combat - Cast Terrifying Roar'),
 (9506001, 0, 3, 0, 0, 0, 100, 0, 8000, 8000, 14000, 19000, 0, 0, 11, 15550, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - In Combat - Cast Trample'),
 (9506001, 0, 4, 0, 9, 0, 100, 0, 0, 5, 4000, 13000, 0, 0, 11, 14331, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - Within 0-5 Range - Cast Vicious Rend'),
+(9506005, 0, 0, 0, 11, 0, 100, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - On Respawn - Say Line 0'),
+(9506005, 0, 1, 0, 4, 0, 100, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - On Aggro - Say Line 1'),
+(9506005, 0, 2, 0, 0, 0, 100, 0, 10000, 10000, 12000, 20000, 0, 0, 11, 14100, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - In Combat - Cast Terrifying Roar'),
+(9506005, 0, 3, 0, 0, 0, 100, 0, 8000, 8000, 14000, 19000, 0, 0, 11, 15550, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - In Combat - Cast Trample'),
+(9506005, 0, 4, 0, 9, 0, 100, 0, 0, 5, 4000, 13000, 0, 0, 11, 14331, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - Within 0-5 Range - Cast Vicious Rend'),
+(9506006, 0, 0, 0, 11, 0, 100, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - On Respawn - Say Line 0'),
+(9506006, 0, 1, 0, 4, 0, 100, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - On Aggro - Say Line 1'),
+(9506006, 0, 2, 0, 0, 0, 100, 0, 10000, 10000, 12000, 20000, 0, 0, 11, 14100, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - In Combat - Cast Terrifying Roar'),
+(9506006, 0, 3, 0, 0, 0, 100, 0, 8000, 8000, 14000, 19000, 0, 0, 11, 15550, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - In Combat - Cast Trample'),
+(9506006, 0, 4, 0, 9, 0, 100, 0, 0, 5, 4000, 13000, 0, 0, 11, 14331, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - Within 0-5 Range - Cast Vicious Rend'),
+(9506007, 0, 0, 0, 11, 0, 100, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - On Respawn - Say Line 0'),
+(9506007, 0, 1, 0, 4, 0, 100, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - On Aggro - Say Line 1'),
+(9506007, 0, 2, 0, 0, 0, 100, 0, 10000, 10000, 12000, 20000, 0, 0, 11, 14100, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - In Combat - Cast Terrifying Roar'),
+(9506007, 0, 3, 0, 0, 0, 100, 0, 8000, 8000, 14000, 19000, 0, 0, 11, 15550, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - In Combat - Cast Trample'),
+(9506007, 0, 4, 0, 9, 0, 100, 0, 0, 5, 4000, 13000, 0, 0, 11, 14331, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - Within 0-5 Range - Cast Vicious Rend'),
+(9506008, 0, 0, 0, 11, 0, 100, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - On Respawn - Say Line 0'),
+(9506008, 0, 1, 0, 4, 0, 100, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - On Aggro - Say Line 1'),
+(9506008, 0, 2, 0, 0, 0, 100, 0, 10000, 10000, 12000, 20000, 0, 0, 11, 14100, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - In Combat - Cast Terrifying Roar'),
+(9506008, 0, 3, 0, 0, 0, 100, 0, 8000, 8000, 14000, 19000, 0, 0, 11, 15550, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - In Combat - Cast Trample'),
+(9506008, 0, 4, 0, 9, 0, 100, 0, 0, 5, 4000, 13000, 0, 0, 11, 14331, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - Within 0-5 Range - Cast Vicious Rend'),
 (9506002, 0, 0, 0, 11, 0, 100, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Zandalari Warbringer - On Respawn - Say Line 0'),
 (9506002, 0, 1, 0, 4, 0, 100, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Zandalari Warbringer - On Aggro - Say Line 1'),
 (9506002, 0, 2, 0, 0, 0, 100, 0, 5000, 7000, 6000, 9000, 0, 0, 11, 15284, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 'Zandalari Warbringer - In Combat - Cast Cleave'),
@@ -373,7 +414,7 @@ INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_
 -- rares: roughly twelve hours of hunting for 9,999 alone. Eggs: a reference (below) that only
 -- players with one of the quests taken can see.
 DELETE FROM `creature_loot_template` WHERE `Item` IN (1963, 9506000) AND `Entry` IN (6505, 6506, 6507, 6508, 9162, 9163, 9164, 9165, 9166, 9167, 6517, 6518, 6519, 6527, 6501, 6502, 6503, 6504, 6498, 6581, 6583, 6584);
-DELETE FROM `creature_loot_template` WHERE `Entry` BETWEEN 9506001 AND 9506004;
+DELETE FROM `creature_loot_template` WHERE `Entry` BETWEEN 9506001 AND 9506008;
 INSERT INTO `creature_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `QuestRequired`, `LootMode`, `GroupId`, `MinCount`, `MaxCount`, `Comment`) VALUES
 (6505, 1963, 0, 100, 1, 1, 0, 3, 6, 'mod-primal-bones: Ravasaur - Primal Bone'),
 (6505, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur - Primal Egg'),
@@ -419,15 +460,27 @@ INSERT INTO `creature_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `Q
 (6583, 9506000, 9506000, 25, 0, 1, 0, 1, 1, 'mod-primal-bones: Gruff - Primal Egg'),
 (6584, 1963, 0, 100, 1, 1, 0, 150, 250, 'mod-primal-bones: King Mosh - Primal Bone'),
 (6584, 9506000, 9506000, 25, 0, 1, 0, 1, 1, 'mod-primal-bones: King Mosh - Primal Egg'),
-(9506001, 1963, 0, 100, 1, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant - Primal Bone'),
-(9506001, 9506000, 9506000, 100, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant - Primal Egg'),
+(9506001, 1963, 0, 100, 1, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (dark) - Primal Bone'),
+(9506001, 9506000, 9506000, 100, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (dark) - Primal Egg'),
+(9506005, 1963, 0, 100, 1, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (blue) - Primal Bone'),
+(9506005, 9506000, 9506000, 100, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (blue) - Primal Egg'),
+(9506006, 1963, 0, 100, 1, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (green) - Primal Bone'),
+(9506006, 9506000, 9506000, 100, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (green) - Primal Egg'),
+(9506007, 1963, 0, 100, 1, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (pale) - Primal Bone'),
+(9506007, 9506000, 9506000, 100, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (pale) - Primal Egg'),
+(9506008, 1963, 0, 100, 1, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (brown) - Primal Bone'),
+(9506008, 9506000, 9506000, 100, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (brown) - Primal Egg'),
 (9506002, 1963, 0, 100, 1, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Slate) - Primal Bone'),
 (9506002, 9506000, 9506000, 50, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Slate) - Primal Egg'),
 (9506003, 1963, 0, 100, 1, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Amber) - Primal Bone'),
 (9506003, 9506000, 9506000, 50, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Amber) - Primal Egg'),
 (9506004, 1963, 0, 100, 1, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Jade) - Primal Bone'),
 (9506004, 9506000, 9506000, 50, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Jade) - Primal Egg'),
-(9506001, 400533, 0, 5, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant - Cobalt Primordial Direhorn'),
+(9506001, 400533, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (dark) - Cobalt Primordial Direhorn'),
+(9506005, 401058, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (blue) - Cobalt Pterrordax'),
+(9506006, 402084, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (green) - Jade Pterrordax'),
+(9506007, 401180, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (pale) - Swift Albino Raptor'),
+(9506008, 400545, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (brown) - Golden Primal Direhorn'),
 (9506002, 400535, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Slate Primordial Direhorn'),
 (9506003, 400534, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Amber Primordial Direhorn'),
 (9506004, 400536, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Jade Primordial Direhorn');
@@ -470,9 +523,21 @@ DELETE FROM `gameobject` WHERE `guid` BETWEEN 9506000 AND 9506099;
 
 INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `wander_distance`, `MovementType`, `Comment`) VALUES
 (9506000, 9506000, 1, 1, 1, 1, -6536.00, -1130.00, -265.84, 4.52, 300, 0, 0, 'mod-primal-bones: Ju''zaro, rim of the Lakkari Tar Pits'),
-(9506010, 9506001, 1, 1, 1, 0, -6320.00, -1266.00, -266.39, 3.60, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant, north rim of the Lakkari Tar Pits'),
-(9506011, 9506001, 1, 1, 1, 0, -6488.00, -1414.00, -266.45, 3.00, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant, north-east rim of the Lakkari Tar Pits'),
-(9506012, 9506001, 1, 1, 1, 0, -6700.00, -1432.00, -268.82, 1.20, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant, south rim of the Lakkari Tar Pits'),
+(9506040, 9506001, 1, 1, 1, 0, -6320.00, -1266.00, -266.39, 3.60, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant (dark), north rim of the Lakkari Tar Pits'),
+(9506041, 9506005, 1, 1, 1, 0, -6320.00, -1266.00, -266.39, 3.60, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant (blue), north rim of the Lakkari Tar Pits'),
+(9506042, 9506006, 1, 1, 1, 0, -6320.00, -1266.00, -266.39, 3.60, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant (green), north rim of the Lakkari Tar Pits'),
+(9506043, 9506007, 1, 1, 1, 0, -6320.00, -1266.00, -266.39, 3.60, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant (pale), north rim of the Lakkari Tar Pits'),
+(9506044, 9506008, 1, 1, 1, 0, -6320.00, -1266.00, -266.39, 3.60, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant (brown), north rim of the Lakkari Tar Pits'),
+(9506045, 9506001, 1, 1, 1, 0, -6488.00, -1414.00, -266.45, 3.00, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant (dark), north-east rim of the Lakkari Tar Pits'),
+(9506046, 9506005, 1, 1, 1, 0, -6488.00, -1414.00, -266.45, 3.00, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant (blue), north-east rim of the Lakkari Tar Pits'),
+(9506047, 9506006, 1, 1, 1, 0, -6488.00, -1414.00, -266.45, 3.00, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant (green), north-east rim of the Lakkari Tar Pits'),
+(9506048, 9506007, 1, 1, 1, 0, -6488.00, -1414.00, -266.45, 3.00, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant (pale), north-east rim of the Lakkari Tar Pits'),
+(9506049, 9506008, 1, 1, 1, 0, -6488.00, -1414.00, -266.45, 3.00, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant (brown), north-east rim of the Lakkari Tar Pits'),
+(9506050, 9506001, 1, 1, 1, 0, -6700.00, -1432.00, -268.82, 1.20, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant (dark), south rim of the Lakkari Tar Pits'),
+(9506051, 9506005, 1, 1, 1, 0, -6700.00, -1432.00, -268.82, 1.20, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant (blue), south rim of the Lakkari Tar Pits'),
+(9506052, 9506006, 1, 1, 1, 0, -6700.00, -1432.00, -268.82, 1.20, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant (green), south rim of the Lakkari Tar Pits'),
+(9506053, 9506007, 1, 1, 1, 0, -6700.00, -1432.00, -268.82, 1.20, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant (pale), south rim of the Lakkari Tar Pits'),
+(9506054, 9506008, 1, 1, 1, 0, -6700.00, -1432.00, -268.82, 1.20, 10800, 10, 1, 'mod-primal-bones: Tarborn Tyrant (brown), south rim of the Lakkari Tar Pits'),
 (9506020, 9506002, 1, 1, 1, 1, -6864.70, -619.10, -271.31, 5.50, 3600, 15, 1, 'mod-primal-bones: Warbringer (Slate), north-western jungle'),
 (9506021, 9506003, 1, 1, 1, 1, -6864.70, -619.10, -271.31, 5.50, 3600, 15, 1, 'mod-primal-bones: Warbringer (Amber), north-western jungle'),
 (9506022, 9506004, 1, 1, 1, 1, -6864.70, -619.10, -271.31, 5.50, 3600, 15, 1, 'mod-primal-bones: Warbringer (Jade), north-western jungle'),
@@ -489,15 +554,28 @@ INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `equipmen
 (9506033, 9506003, 1, 1, 1, 1, -6782.50, -2216.20, -271.93, 3.10, 3600, 15, 1, 'mod-primal-bones: Warbringer (Amber), eastern marshes'),
 (9506034, 9506004, 1, 1, 1, 1, -6782.50, -2216.20, -271.93, 3.10, 3600, 15, 1, 'mod-primal-bones: Warbringer (Jade), eastern marshes');
 
--- One Tyrant at a time (three hours after a kill, at any of its spots), and one Warbringer at a
--- time (an hour after a kill, any colour at any of its spots). Chance 0: all equally likely.
+-- One Tyrant at a time (three hours after a kill, any skin at any of its spots), and one
+-- Warbringer at a time (an hour after a kill, any colour at any of its spots). Chance 0: all
+-- equally likely.
 INSERT INTO `pool_template` (`entry`, `max_limit`, `description`) VALUES
-(9506001, 1, 'mod-primal-bones: Tarborn Tyrant, one spot at a time'),
+(9506001, 1, 'mod-primal-bones: Tarborn Tyrant, one skin and spot at a time'),
 (9506002, 1, 'mod-primal-bones: Zandalari Warbringer, one colour and spot at a time');
 INSERT INTO `pool_creature` (`guid`, `pool_entry`, `chance`, `description`) VALUES
-(9506010, 9506001, 0, 'Tarborn Tyrant'),
-(9506011, 9506001, 0, 'Tarborn Tyrant'),
-(9506012, 9506001, 0, 'Tarborn Tyrant'),
+(9506040, 9506001, 0, 'Tarborn Tyrant'),
+(9506041, 9506001, 0, 'Tarborn Tyrant'),
+(9506042, 9506001, 0, 'Tarborn Tyrant'),
+(9506043, 9506001, 0, 'Tarborn Tyrant'),
+(9506044, 9506001, 0, 'Tarborn Tyrant'),
+(9506045, 9506001, 0, 'Tarborn Tyrant'),
+(9506046, 9506001, 0, 'Tarborn Tyrant'),
+(9506047, 9506001, 0, 'Tarborn Tyrant'),
+(9506048, 9506001, 0, 'Tarborn Tyrant'),
+(9506049, 9506001, 0, 'Tarborn Tyrant'),
+(9506050, 9506001, 0, 'Tarborn Tyrant'),
+(9506051, 9506001, 0, 'Tarborn Tyrant'),
+(9506052, 9506001, 0, 'Tarborn Tyrant'),
+(9506053, 9506001, 0, 'Tarborn Tyrant'),
+(9506054, 9506001, 0, 'Tarborn Tyrant'),
 (9506020, 9506002, 0, 'Zandalari Warbringer'),
 (9506021, 9506002, 0, 'Zandalari Warbringer'),
 (9506022, 9506002, 0, 'Zandalari Warbringer'),
