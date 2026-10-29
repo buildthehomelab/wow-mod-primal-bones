@@ -46,3 +46,5 @@ local.properties
 .loadpath
 .project
 .cproject
+__pycache__/
+*.pyc
