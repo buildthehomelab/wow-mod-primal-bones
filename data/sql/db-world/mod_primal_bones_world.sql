@@ -20,7 +20,7 @@
 --
 -- Needs the item and creature rows of wow-mod-retail-collection (the rewards, 400000+ and 410000+)
 -- and the looks of wow-mod-retail-library (the direhorns the Warbringers ride and the Tyrant's
--- striped devilsaur, displays 247249/247271/247272/247273/276972).
+-- striped devilsaur, displays 247249/247271/247272/247273).
 --
 -- This module's ids: creature, quest, npc_text, gossip menu, reference loot, pool and spawn guids
 -- 9506000-9506099. Stock rows changed: the three repurposed items above, and new loot rows on 22
@@ -285,8 +285,8 @@ INSERT INTO `creature_questender` (`id`, `quest`) VALUES
 -- ---------------------------------------------------------------------------------------------
 
 -- Tarborn Tyrant: a primal devilsaur that crawled out of the tar, built like King Mosh (rank 2,
--- rare elite; same health, damage and abilities). Each spawn wears one of retail's five striped
--- primal devilsaur skins. Skinning gives what King Mosh's corpse gives.
+-- rare elite; same health, damage and abilities). Each spawn wears one of four of retail's
+-- striped primal devilsaur skins (dark, blue, green, pale; a creature takes at most four looks). Skinning gives what King Mosh's corpse gives.
 DELETE FROM `creature_template` WHERE `entry` = 9506001;
 INSERT INTO `creature_template` (`entry`, `name`, `minlevel`, `maxlevel`, `faction`, `speed_walk`, `speed_run`, `rank`, `DamageModifier`, `BaseAttackTime`, `RangeAttackTime`, `unit_class`, `unit_flags`, `unit_flags2`, `type`, `lootid`, `skinloot`, `mingold`, `maxgold`, `AIName`, `HealthModifier`, `RegenHealth`) VALUES
 (9506001, 'Tarborn Tyrant', 61, 61, 14, 1.6, 1.71429, 2, 8.5, 1500, 2000, 1, 64, 2048, 1, 9506001, 6584, 3975, 5196, 'SmartAI', 20, 1);
@@ -296,8 +296,7 @@ INSERT INTO `creature_template_model` (`CreatureID`, `Idx`, `CreatureDisplayID`,
 (9506001, 0, 247249, 1, 1, 0),
 (9506001, 1, 247271, 1, 1, 0),
 (9506001, 2, 247272, 1, 1, 0),
-(9506001, 3, 247273, 1, 1, 0),
-(9506001, 4, 276972, 1, 1, 0);
+(9506001, 3, 247273, 1, 1, 0);
 
 -- Zandalari Warbringers: the Zandalar Enforcer's model and gear, mounted on a Primordial
 -- Direhorn from the retail library (creature_template_addon.mount). One entry per colour, so

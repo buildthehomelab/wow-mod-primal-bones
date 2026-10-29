@@ -33,8 +33,8 @@ Raptor**.
   included, into a Hatched Primal Egg. Open it: 9% of the time it's one of the three primal
   raptors, 36% one of the six Zandalari raptor pets, otherwise 100-200 bones.
 - **Tarborn Tyrant**, a rare elite primal devilsaur that claws its way out of the tar on one of
-  three spots around the pits, three hours after it was last killed. It wears one of retail's
-  five striped primal devilsaur skins, fights like King Mosh, and drops 200-250 bones, an egg and
+  three spots around the pits, three hours after it was last killed. It wears one of four of
+  retail's striped primal devilsaur skins, fights like King Mosh, and drops 200-250 bones, an egg and
   sometimes (5%) the Cobalt Primordial Direhorn.
 - **Zandalari Warbringers**: rare elite Zandalari riding Slate, Amber or Jade Primordial
   Direhorns. One is out at a time, on one of five spots across the crater; an hour after a kill
@@ -48,7 +48,7 @@ Raptor**.
   mounts and pets the quests and drops give are its items (400000+ and 410000+).
 - [wow-mod-retail-library](https://github.com/buildthehomelab/wow-mod-retail-library) and its
   client patches: the Warbringers ride its direhorn looks, and the Tarborn Tyrant wears its
-  striped primal devilsaur looks (displays 247249, 247271, 247272, 247273 and 276972).
+  striped primal devilsaur looks (displays 247249, 247271, 247272 and 247273).
 
 No client patch of its own: the bones and eggs reuse three items Blizzard never used (Deprecated
 Bone Chips 1963, NPC Equip 20798 and 23357), whose rows the client already has with bone and egg
