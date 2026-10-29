@@ -8,9 +8,10 @@
 --                    offline time included: the module's item script swaps it for
 --   item 20798       Hatched Primal Egg (repurposed "NPC Equip 20798", egg icon), which opens.
 --   creature 9506000 Ju'zaro, Zandalar Bonewright, camped on the rim of the Lakkari Tar Pits.
---   quests 9506000.. The Ten-Thousandth Bone (9,999 bones: Bone-White Primal Raptor), and 15 more
---   9506015          that trade bones for the other primal raptors, a direhorn and pets. Each can
---                    be done once. They all take bones from the same pile.
+--   quest 9506000    The Bonewright's Price: 100 bones, and Ju'zaro's shop opens. He sells the
+--                    Bone-White Primal Raptor (9,999 bones), the other primal raptors and a
+--                    direhorn (3,333) and pets (500 and 250), for Primal Bones only (prices:
+--                    ItemExtendedCost 90430-90433, which the client needs too: tools/build_patch.py).
 --   creatures        Tarborn Tyrant, rare elite primal devilsaur, one entry per striped skin, each
 --   9506001, 9506005 with its own mount; three spawn spots, one Tyrant at a time.
 --   ..9506008
@@ -18,15 +19,15 @@
 --   9506002-9506004, Slate, Amber or Jade Primordial Direhorn, or the Crimson Primal Direhorn;
 --   9506009          five spawn spots, one Warbringer at a time.
 --
--- Bones and eggs only drop for a player with one of Ju'zaro's quests in the quest log. Bones are a
--- quest objective (QuestRequired loot); eggs are conditioned on the quests being taken.
+-- Bones and eggs drop for a player who is on Ju'zaro's quest or has done it (loot conditions), and
+-- for nobody else.
 --
 -- Needs the item and creature rows of wow-mod-retail-collection (the rewards, 400000+ and 410000+)
 -- and the looks of wow-mod-retail-library (the direhorns the Warbringers ride and the Tyrant's
 -- striped devilsaur, displays 247249/247271/247272/247273/276972).
 --
 -- This module's ids: creature, quest, npc_text, gossip menu, reference loot, pool and spawn guids
--- 9506000-9506099. Stock rows changed: the three repurposed items above, and new loot rows on 22
+-- 9506000-9506099; ItemExtendedCost 90430-90439. Stock rows changed: the three repurposed items above, and new loot rows on 22
 -- Un'Goro creatures (only rows for this module's items). Idempotent. Undo with
 -- data/sql/uninstall/mod_primal_bones_uninstall_world.sql.
 
@@ -75,10 +76,10 @@ INSERT INTO `item_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `Quest
 -- ---------------------------------------------------------------------------------------------
 
 -- The Zandalarian Emissary's model (15210) and weapon. Faction 35: friendly to everyone.
--- npcflag 3: gossip and quests. unit_flags 768: nothing attacks him.
+-- npcflag 131: gossip, quests and vendor. unit_flags 768: nothing attacks him.
 DELETE FROM `creature_template` WHERE `entry` = 9506000;
 INSERT INTO `creature_template` (`entry`, `name`, `subname`, `gossip_menu_id`, `minlevel`, `maxlevel`, `faction`, `npcflag`, `speed_walk`, `speed_run`, `BaseAttackTime`, `RangeAttackTime`, `unit_class`, `unit_flags`, `unit_flags2`, `type`, `HealthModifier`, `flags_extra`) VALUES
-(9506000, 'Ju''zaro', 'Zandalar Bonewright', 9506000, 60, 60, 35, 3, 1, 1.14286, 2000, 2000, 1, 768, 2048, 7, 3, 2);
+(9506000, 'Ju''zaro', 'Zandalar Bonewright', 9506000, 60, 60, 35, 131, 1, 1.14286, 2000, 2000, 1, 768, 2048, 7, 3, 2);
 
 DELETE FROM `creature_template_model` WHERE `CreatureID` = 9506000;
 INSERT INTO `creature_template_model` (`CreatureID`, `Idx`, `CreatureDisplayID`, `DisplayScale`, `Probability`, `VerifiedBuild`) VALUES
@@ -88,200 +89,156 @@ DELETE FROM `creature_equip_template` WHERE `CreatureID` = 9506000;
 INSERT INTO `creature_equip_template` (`CreatureID`, `ID`, `ItemID1`, `ItemID2`, `ItemID3`, `VerifiedBuild`) VALUES
 (9506000, 1, 13336, 0, 0, 0);
 
--- What he says depends on the bones in your bags. Exactly one of the texts below fits any player
--- (the conditions further down), so the order the core reads them in doesn't matter.
-DELETE FROM `npc_text` WHERE `ID` BETWEEN 9506000 AND 9506005;
+-- What he says depends on whether you have done his quest and on the bones in your bags. Exactly
+-- one of the texts below fits any player (the conditions further down), so the order the core
+-- reads them in doesn't matter.
+DELETE FROM `npc_text` WHERE `ID` BETWEEN 9506000 AND 9506006;
 INSERT INTO `npc_text` (`ID`, `text0_0`, `text0_1`, `Probability0`) VALUES
 (9506000, 'Da crater would eat you alive, little one. Da devilsaurs don''t care how brave you be.$B$BCome back when you be strong enough to stand in da tar and walk out again.', 'Da crater would eat you alive, little one. Da devilsaurs don''t care how brave you be.$B$BCome back when you be strong enough to stand in da tar and walk out again.', 1),
-(9506001, 'Da tar keeps everything, mon. Bones, beasts, secrets. Ju''zaro just be here to take some of it back.$B$BDa beasts of dis crater carry da oldest blood on Azeroth. Bring Ju''zaro dere bones and da tar gives you somethin'' back.', 'Da tar keeps everything, mon. Bones, beasts, secrets. Ju''zaro just be here to take some of it back.$B$BDa beasts of dis crater carry da oldest blood on Azeroth. Bring Ju''zaro dere bones and da tar gives you somethin'' back.', 1),
+(9506001, 'Da tar keeps everything, mon. Bones, beasts, secrets. Ju''zaro just be here to take some of it back.$B$BJu''zaro trades with hunters, not tourists. Show Ju''zaro you can hunt, and you see what da tar gave up.', 'Da tar keeps everything, mon. Bones, beasts, secrets. Ju''zaro just be here to take some of it back.$B$BJu''zaro trades with hunters, not tourists. Show Ju''zaro you can hunt, and you see what da tar gave up.', 1),
+(9506006, 'Da tar keeps everything, mon. Bones, beasts, secrets. Ju''zaro just be here to take some of it back.$B$BDa beasts of dis crater carry da oldest blood on Azeroth. Bring Ju''zaro dere bones, and pick what you like.', 'Da tar keeps everything, mon. Bones, beasts, secrets. Ju''zaro just be here to take some of it back.$B$BDa beasts of dis crater carry da oldest blood on Azeroth. Bring Ju''zaro dere bones, and pick what you like.', 1),
 (9506002, 'A quarter of da rite already. Ju''zaro can hear da tar listenin'' now.', 'A quarter of da rite already. Ju''zaro can hear da tar listenin'' now.', 1),
 (9506003, 'Half. Somethin'' under da pitch be stirrin'', $N. Somethin'' pale.', 'Half. Somethin'' under da pitch be stirrin'', $N. Somethin'' pale.', 1),
 (9506004, 'So close. Da old bones be whisperin'' your name in da night. Ju''zaro hears it too.', 'So close. Da old bones be whisperin'' your name in da night. Ju''zaro hears it too.', 1),
-(9506005, 'Dat be all of dem! Give dem here, quick, before da egg hatches without you.', 'Dat be all of dem! Give dem here, quick, before da egg hatches without you.', 1);
+(9506005, 'Nine thousand, nine hundred and ninety-nine! Dat be da whole rite, $N. Da white one be waitin'' in Ju''zaro''s wares.', 'Nine thousand, nine hundred and ninety-nine! Dat be da whole rite, $N. Da white one be waitin'' in Ju''zaro''s wares.', 1);
 
 DELETE FROM `gossip_menu` WHERE `MenuID` = 9506000;
 INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
-(9506000, 9506000), (9506000, 9506001), (9506000, 9506002), (9506000, 9506003), (9506000, 9506004), (9506000, 9506005);
+(9506000, 9506000), (9506000, 9506001), (9506000, 9506002), (9506000, 9506003), (9506000, 9506004), (9506000, 9506005), (9506000, 9506006);
 
--- Source type 14 (gossip menu text). Type 27: level, compared 2 (lower) or 3 (at least).
--- Type 2: that many Primal Bones in the bags. NegativeCondition 1 turns a row around.
+-- Source type 14 (gossip menu text). Type 27: level, compared 2 (lower) or 3 (at least). Type 8:
+-- quest 9506000 done. Type 2: that many Primal Bones in the bags. NegativeCondition 1 turns a row
+-- around.
 DELETE FROM `conditions` WHERE `SourceTypeOrReferenceId` = 14 AND `SourceGroup` = 9506000;
 INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry`, `SourceId`, `ElseGroup`, `ConditionTypeOrReference`, `ConditionTarget`, `ConditionValue1`, `ConditionValue2`, `ConditionValue3`, `NegativeCondition`, `ErrorType`, `ErrorTextId`, `ScriptName`, `Comment`) VALUES
 (14, 9506000, 9506000, 0, 0, 27, 0, 60, 2, 0, 0, 0, 0, '', 'mod-primal-bones: Ju''zaro, below level 60'),
 (14, 9506000, 9506001, 0, 0, 27, 0, 60, 3, 0, 0, 0, 0, '', 'mod-primal-bones: Ju''zaro, level 60'),
-(14, 9506000, 9506001, 0, 0, 2, 0, 1963, 2500, 0, 1, 0, 0, '', 'mod-primal-bones: Ju''zaro, fewer than 2500 bones'),
+(14, 9506000, 9506001, 0, 0, 8, 0, 9506000, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Ju''zaro, shop not open yet'),
+(14, 9506000, 9506006, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Ju''zaro, shop open'),
+(14, 9506000, 9506006, 0, 0, 2, 0, 1963, 2500, 0, 1, 0, 0, '', 'mod-primal-bones: Ju''zaro, fewer than 2500 bones'),
+(14, 9506000, 9506002, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Ju''zaro, shop open'),
 (14, 9506000, 9506002, 0, 0, 2, 0, 1963, 2500, 0, 0, 0, 0, '', 'mod-primal-bones: Ju''zaro, 2500 bones'),
 (14, 9506000, 9506002, 0, 0, 2, 0, 1963, 5000, 0, 1, 0, 0, '', 'mod-primal-bones: Ju''zaro, fewer than 5000 bones'),
+(14, 9506000, 9506003, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Ju''zaro, shop open'),
 (14, 9506000, 9506003, 0, 0, 2, 0, 1963, 5000, 0, 0, 0, 0, '', 'mod-primal-bones: Ju''zaro, 5000 bones'),
 (14, 9506000, 9506003, 0, 0, 2, 0, 1963, 7500, 0, 1, 0, 0, '', 'mod-primal-bones: Ju''zaro, fewer than 7500 bones'),
+(14, 9506000, 9506004, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Ju''zaro, shop open'),
 (14, 9506000, 9506004, 0, 0, 2, 0, 1963, 7500, 0, 0, 0, 0, '', 'mod-primal-bones: Ju''zaro, 7500 bones'),
 (14, 9506000, 9506004, 0, 0, 2, 0, 1963, 9999, 0, 1, 0, 0, '', 'mod-primal-bones: Ju''zaro, fewer than 9999 bones'),
+(14, 9506000, 9506005, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Ju''zaro, shop open'),
 (14, 9506000, 9506005, 0, 0, 2, 0, 1963, 9999, 0, 0, 0, 0, '', 'mod-primal-bones: Ju''zaro, 9999 bones');
 
+-- His wares: a gossip option that opens the vendor list, shown once his quest is done (source
+-- type 15, type 8). Icon 0 (chat): a 3.3.5 client offered a single option with any other icon
+-- opens it straight away and skips the greeting.
+DELETE FROM `gossip_menu_option` WHERE `MenuID` = 9506000;
+INSERT INTO `gossip_menu_option` (`MenuID`, `OptionID`, `OptionIcon`, `OptionText`, `OptionBroadcastTextID`, `OptionType`, `OptionNpcFlag`, `ActionMenuID`, `ActionPoiID`, `BoxCoded`, `BoxMoney`, `BoxText`, `BoxBroadcastTextID`, `VerifiedBuild`) VALUES
+(9506000, 0, 0, 'Show me what the tar gave up.', 0, 3, 128, 0, 0, 0, 0, '', 0, 0);
+
+DELETE FROM `conditions` WHERE `SourceTypeOrReferenceId` = 15 AND `SourceGroup` = 9506000;
+INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry`, `SourceId`, `ElseGroup`, `ConditionTypeOrReference`, `ConditionTarget`, `ConditionValue1`, `ConditionValue2`, `ConditionValue3`, `NegativeCondition`, `ErrorType`, `ErrorTextId`, `ScriptName`, `Comment`) VALUES
+(15, 9506000, 0, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Ju''zaro''s wares, after his quest');
+
 -- ---------------------------------------------------------------------------------------------
--- The quests
+-- The quest
 -- ---------------------------------------------------------------------------------------------
 
--- Level 60, filed under Un'Goro Crater (490), no experience or money. Flags 64: can be done in
--- a raid group, so bones and eggs still drop for players in one.
+-- Level 60, filed under Un'Goro Crater (490), no experience or money: it opens Ju'zaro's shop.
+-- Flags 64: can be done in a raid group, so bones and eggs still drop for players in one. Ids
+-- 9506001-9506015 were the trade quests of earlier versions; the DELETEs still clear them.
 DELETE FROM `quest_template` WHERE `ID` BETWEEN 9506000 AND 9506015;
-INSERT INTO `quest_template` (`ID`, `QuestType`, `QuestLevel`, `MinLevel`, `QuestSortID`, `QuestInfoID`, `Flags`, `RequiredItemId1`, `RequiredItemCount1`, `RewardItem1`, `RewardAmount1`, `LogTitle`, `LogDescription`, `QuestDescription`, `QuestCompletionLog`, `VerifiedBuild`) VALUES
-(9506000, 2, 60, 60, 490, 0, 64, 1963, 9999, 400537, 1,
- 'The Ten-Thousandth Bone',
- 'Bring 9,999 Primal Bones to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.',
- 'You smell dat, $C? Tar, and old blood. Dis crater be da oldest garden on Azeroth. Da titans planted it, and da beasts here still carry da first bloodlines in dere bones.$B$BDa Zandalar been raisin'' raptors since before your kingdoms had names. But a primal raptor... dat takes a rite. Ten thousand bones of da crater''s beasts, laid in da tar where da old ones sank.$B$BBring Ju''zaro nine thousand, nine hundred and ninety-nine of dem. Da last bone? Dat one grows inside da egg. When it hatches it be white as all da rest, and it be yours.',
- 'Return to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.', 0),
-(9506001, 2, 60, 60, 490, 0, 64, 1963, 3333, 400538, 1,
- 'Red as the Fire Plume',
- 'Bring 3,333 Primal Bones to Ju''zaro at the Lakkari Tar Pits.',
- 'Not every raptor be needin'' da whole rite. A third of it - three thousand, three hundred and thirty-three bones - and da tar gives up a red one, hot as da Fire Plume.$B$BBut every bone you spend here be a bone da white raptor waits for. Ju''zaro only says it once.',
- 'Return to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.', 0),
-(9506002, 2, 60, 60, 490, 0, 64, 1963, 3333, 400539, 1,
- 'Black as the Tar',
- 'Bring 3,333 Primal Bones to Ju''zaro at the Lakkari Tar Pits.',
- 'Some eggs sink deeper than others. Dey come up black as da pit dey slept in, and dey never forget da dark.$B$BThree thousand, three hundred and thirty-three bones, $N. Dat be da price of a third of da rite.',
- 'Return to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.', 0),
-(9506003, 2, 60, 60, 490, 0, 64, 1963, 3333, 400540, 1,
- 'Green as the Crater',
- 'Bring 3,333 Primal Bones to Ju''zaro at the Lakkari Tar Pits.',
- 'Da green ones hatch where da jungle grows over da tar. Dey be fast, and dey be hungry, and dey go anywhere da vines go.$B$BThree thousand, three hundred and thirty-three bones for a third of da rite.',
- 'Return to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.', 0),
-(9506004, 2, 60, 60, 490, 0, 64, 1963, 3333, 401179, 1,
- 'The Palehide',
- 'Bring 3,333 Primal Bones to Ju''zaro at the Lakkari Tar Pits.',
- 'Da direhorns be older than da raptors, $C. Older than da Zandalar, maybe. Dere be a palehide calf in da shallows dat lost its herd to a devilsaur, and it follows Ju''zaro around da camp like a lost kitten.$B$BIt needs a rider dat can keep it fed. Three thousand, three hundred and thirty-three bones says you can.',
- 'Return to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.', 0),
-(9506005, 2, 60, 60, 490, 0, 64, 1963, 500, 411180, 1,
- 'A Kneebiter of Your Own',
- 'Bring 500 Primal Bones to Ju''zaro at the Lakkari Tar Pits.',
- 'Ju''zaro keeps a clutch of little ones from Zandalar. Dis one bites knees. It bit Ju''zaro''s knees all da way across da sea.$B$BFive hundred bones and it be biting yours instead.',
- 'Return to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.', 0),
-(9506006, 2, 60, 60, 490, 0, 64, 1963, 500, 411211, 1,
- 'The Anklerender',
- 'Bring 500 Primal Bones to Ju''zaro at the Lakkari Tar Pits.',
- 'Dis one goes for da ankles. Smarter than da kneebiter: you can''t run without ankles.$B$BFive hundred bones.',
- 'Return to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.', 0),
-(9506007, 2, 60, 60, 490, 0, 64, 1963, 500, 411212, 1,
- 'The Footslasher',
- 'Bring 500 Primal Bones to Ju''zaro at the Lakkari Tar Pits.',
- 'Toes, ankles, knees... dis one does not care. It be slashin'' whatever be nearest da ground.$B$BFive hundred bones.',
- 'Return to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.', 0),
-(9506008, 2, 60, 60, 490, 0, 64, 1963, 500, 411213, 1,
- 'The Toenibbler',
- 'Bring 500 Primal Bones to Ju''zaro at the Lakkari Tar Pits.',
- 'Da gentle one of da clutch. It only nibbles. Mostly.$B$BFive hundred bones.',
- 'Return to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.', 0),
-(9506009, 2, 60, 60, 490, 0, 64, 1963, 500, 412413, 1,
- 'The Shinchomper',
- 'Bring 500 Primal Bones to Ju''zaro at the Lakkari Tar Pits.',
- 'Ju''zaro will not lie to you: dis one be trouble. Da shins never see it comin''.$B$BFive hundred bones.',
- 'Return to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.', 0),
-(9506010, 2, 60, 60, 490, 0, 64, 1963, 500, 412537, 1,
- 'A Baby Raptor',
- 'Bring 500 Primal Bones to Ju''zaro at the Lakkari Tar Pits.',
- 'Da youngest of da Zandalari clutch. It ain''t learned what to bite yet, so it bites everything.$B$BFive hundred bones.',
- 'Return to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.', 0),
-(9506011, 2, 60, 60, 490, 0, 64, 1963, 500, 411200, 1,
- 'A Pygmy Direhorn',
- 'Bring 500 Primal Bones to Ju''zaro at the Lakkari Tar Pits.',
- 'Not every direhorn grows big. Dis one be stayin'' small forever, and it be very angry about it.$B$BFive hundred bones.',
- 'Return to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.', 0),
-(9506012, 2, 60, 60, 490, 0, 64, 1963, 500, 412412, 1,
- 'A Tiny Direhorn',
- 'Bring 500 Primal Bones to Ju''zaro at the Lakkari Tar Pits.',
- 'Found dis one sleepin'' in a stegodon''s footprint. Da footprint be bigger than it is.$B$BFive hundred bones.',
- 'Return to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.', 0),
-(9506013, 2, 60, 60, 490, 0, 64, 1963, 500, 411184, 1,
- 'A Stunted Direhorn',
- 'Bring 500 Primal Bones to Ju''zaro at the Lakkari Tar Pits.',
- 'Da herd left dis one behind. Stubby legs, stubby horns, all da stubbornness of a full-grown direhorn.$B$BFive hundred bones.',
- 'Return to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.', 0),
-(9506014, 2, 60, 60, 490, 0, 64, 1963, 250, 412197, 1,
- 'A Direhorn Hatchling',
- 'Bring 250 Primal Bones to Ju''zaro at the Lakkari Tar Pits.',
- 'Ju''zaro found dis one curled up inside an old direhorn skull by da tar, wearin'' it like a shell. It still will not take it off.$B$BTwo hundred and fifty bones.',
- 'Return to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.', 0),
-(9506015, 2, 60, 60, 490, 0, 64, 1963, 250, 410504, 1,
- 'A Diemetradon Hatchling',
- 'Bring 250 Primal Bones to Ju''zaro at the Lakkari Tar Pits.',
- 'Da sail-backs warm demselves on da hot rocks by da tar. Dis little one fell asleep on Ju''zaro''s fire and would not leave.$B$BTwo hundred and fifty bones.',
+INSERT INTO `quest_template` (`ID`, `QuestType`, `QuestLevel`, `MinLevel`, `QuestSortID`, `QuestInfoID`, `Flags`, `RequiredItemId1`, `RequiredItemCount1`, `LogTitle`, `LogDescription`, `QuestDescription`, `QuestCompletionLog`, `VerifiedBuild`) VALUES
+(9506000, 2, 60, 60, 490, 0, 64, 1963, 100,
+ 'The Bonewright''s Price',
+ 'Bring 100 Primal Bones to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.',
+ 'You smell dat, $C? Tar, and old blood. Dis crater be da oldest garden on Azeroth. Da titans planted it, and da beasts here still carry da first bloodlines in dere bones.$B$BDa Zandalar been raisin'' raptors since before your kingdoms had names. Ju''zaro trades in what da tar gives up: primal raptors, direhorns, little ones from Zandalar. Ju''zaro takes bones for dem. Nothin'' else.$B$BBut Ju''zaro trades with hunters, not tourists. Bring a hundred bones from da crater''s beasts, and Ju''zaro shows you his wares.',
  'Return to Ju''zaro at the Lakkari Tar Pits in Un''Goro Crater.', 0);
 
 DELETE FROM `quest_request_items` WHERE `ID` BETWEEN 9506000 AND 9506015;
 INSERT INTO `quest_request_items` (`ID`, `EmoteOnComplete`, `EmoteOnIncomplete`, `CompletionText`, `VerifiedBuild`) VALUES
-(9506000, 1, 1, 'Every beast in dis crater be carryin'' bones, mon. Only a fool leaves dem in da dirt.', 0),
-(9506001, 1, 1, 'A third of a rite be still a rite, mon.', 0),
-(9506002, 1, 1, 'Da tar keeps its eggs close. Bones loosen its grip.', 0),
-(9506003, 1, 1, 'Da jungle be patient. Ju''zaro be less patient.', 0),
-(9506004, 1, 1, 'Da palehide be eatin'' Ju''zaro''s tent pegs again.', 0),
-(9506005, 1, 1, 'Watch your knees, mon.', 0),
-(9506006, 1, 1, 'It be waitin'' under da table again.', 0),
-(9506007, 1, 1, 'Keep your boots on around dis one.', 0),
-(9506008, 1, 1, 'Nibble, nibble.', 0),
-(9506009, 1, 1, 'Ju''zaro be wearin'' greaves now. Ask Ju''zaro why.', 0),
-(9506010, 1, 1, 'It chewed through da bone sack again.', 0),
-(9506011, 1, 1, 'Small horns, big temper.', 0),
-(9506012, 1, 1, 'It be nappin''. Again.', 0),
-(9506013, 1, 1, 'It headbutted da bone pile over. Twice.', 0),
-(9506014, 1, 1, 'It be hidin'' in da skull again.', 0),
-(9506015, 1, 1, 'It be on da fire again. It likes da fire.', 0);
+(9506000, 1, 1, 'Every beast in dis crater be carryin'' bones, mon. Only a fool leaves dem in da dirt.', 0);
 
 DELETE FROM `quest_offer_reward` WHERE `ID` BETWEEN 9506000 AND 9506015;
 INSERT INTO `quest_offer_reward` (`ID`, `Emote1`, `Emote2`, `Emote3`, `Emote4`, `EmoteDelay1`, `EmoteDelay2`, `EmoteDelay3`, `EmoteDelay4`, `RewardText`, `VerifiedBuild`) VALUES
-(9506000, 4, 0, 0, 0, 0, 0, 0, 0, 'Nine thousand, nine hundred and ninety-nine. Ju''zaro counted dem twice.$B$BListen... da tar be bubblin''. Da egg be crackin'' already. See? Pale as da moon, and already lookin'' at you like you owe it dinner.$B$BRide well, $N. Da Zandalar will hear of dis.', 0),
-(9506001, 1, 0, 0, 0, 0, 0, 0, 0, 'Red as da mountain''s blood. Dis one bites, so keep your fingers where it can see dem.', 0),
-(9506002, 1, 0, 0, 0, 0, 0, 0, 0, 'Black as da tar. It hatched quiet, and it be watchin'' you already. Dat be a good sign.', 0),
-(9506003, 1, 0, 0, 0, 0, 0, 0, 0, 'Green as da crater. Take it out where da ferns be tall. It be wantin'' to run.', 0),
-(9506004, 1, 0, 0, 0, 0, 0, 0, 0, 'Da palehide be yours. Feed it well and it carries you through a wall, if you be askin'' it nicely.', 0),
-(9506005, 1, 0, 0, 0, 0, 0, 0, 0, 'Here. He be your problem now.', 0),
-(9506006, 1, 0, 0, 0, 0, 0, 0, 0, 'Take it. Ju''zaro be walkin'' normal again by sunset.', 0),
-(9506007, 1, 0, 0, 0, 0, 0, 0, 0, 'It likes you. It only slashed you a little.', 0),
-(9506008, 1, 0, 0, 0, 0, 0, 0, 0, 'Here. Do not fall asleep without boots.', 0),
-(9506009, 1, 0, 0, 0, 0, 0, 0, 0, 'Go on, take it. Quick, before it remembers Ju''zaro.', 0),
-(9506010, 1, 0, 0, 0, 0, 0, 0, 0, 'It be learnin'' fast. Teach it to bite da right people.', 0),
-(9506011, 1, 0, 0, 0, 0, 0, 0, 0, 'Here. Keep it away from da big ones; it starts fights it cannot finish.', 0),
-(9506012, 1, 0, 0, 0, 0, 0, 0, 0, 'Careful where you step. It sleeps everywhere.', 0),
-(9506013, 1, 0, 0, 0, 0, 0, 0, 0, 'A good little beast. It keeps up, if you walk slow.', 0),
-(9506014, 1, 0, 0, 0, 0, 0, 0, 0, 'Here. Da skull comes with it, apparently.', 0),
-(9506015, 1, 0, 0, 0, 0, 0, 0, 0, 'Keep it warm, $N. It sulks when it be cold.', 0);
+(9506000, 4, 0, 0, 0, 0, 0, 0, 0, 'A hundred, and clean ones. You be a hunter after all.$B$BKeep bringin'' dem. Da white raptor costs nine thousand, nine hundred and ninety-nine, and da last bone grows inside da egg. When it hatches it be white as all da rest.$B$BSee what Ju''zaro has, $N.', 0);
 
 DELETE FROM `creature_queststarter` WHERE `quest` BETWEEN 9506000 AND 9506015;
 INSERT INTO `creature_queststarter` (`id`, `quest`) VALUES
-(9506000, 9506000),
-(9506000, 9506001),
-(9506000, 9506002),
-(9506000, 9506003),
-(9506000, 9506004),
-(9506000, 9506005),
-(9506000, 9506006),
-(9506000, 9506007),
-(9506000, 9506008),
-(9506000, 9506009),
-(9506000, 9506010),
-(9506000, 9506011),
-(9506000, 9506012),
-(9506000, 9506013),
-(9506000, 9506014),
-(9506000, 9506015);
-
+(9506000, 9506000);
 DELETE FROM `creature_questender` WHERE `quest` BETWEEN 9506000 AND 9506015;
 INSERT INTO `creature_questender` (`id`, `quest`) VALUES
-(9506000, 9506000),
-(9506000, 9506001),
-(9506000, 9506002),
-(9506000, 9506003),
-(9506000, 9506004),
-(9506000, 9506005),
-(9506000, 9506006),
-(9506000, 9506007),
-(9506000, 9506008),
-(9506000, 9506009),
-(9506000, 9506010),
-(9506000, 9506011),
-(9506000, 9506012),
-(9506000, 9506013),
-(9506000, 9506014),
-(9506000, 9506015);
+(9506000, 9506000);
+
+-- ---------------------------------------------------------------------------------------------
+-- The shop
+-- ---------------------------------------------------------------------------------------------
+
+-- The prices, in Primal Bones. The client needs the same ItemExtendedCost rows, or the vendor
+-- window shows no price and won't buy: tools/build_patch.py adds them to your realm's spell and
+-- item patch. 90430-90439 are this module's.
+DELETE FROM `itemextendedcost_dbc` WHERE `ID` BETWEEN 90430 AND 90439;
+INSERT INTO `itemextendedcost_dbc` (`ID`, `HonorPoints`, `ArenaPoints`, `ArenaBracket`, `ItemID_1`, `ItemID_2`, `ItemID_3`, `ItemID_4`, `ItemID_5`, `ItemCount_1`, `ItemCount_2`, `ItemCount_3`, `ItemCount_4`, `ItemCount_5`, `RequiredArenaRating`, `ItemPurchaseGroup`) VALUES
+(90430, 0, 0, 0, 1963, 0, 0, 0, 0, 9999, 0, 0, 0, 0, 0, 0),
+(90431, 0, 0, 0, 1963, 0, 0, 0, 0, 3333, 0, 0, 0, 0, 0, 0),
+(90432, 0, 0, 0, 1963, 0, 0, 0, 0, 500, 0, 0, 0, 0, 0, 0),
+(90433, 0, 0, 0, 1963, 0, 0, 0, 0, 250, 0, 0, 0, 0, 0, 0);
+
+-- Every ware teaches a mount or pet whose spell has the item's own id. Each shows only after his
+-- quest (type 8) and while you don't know its spell yet (type 25, negated), so nobody buys one
+-- twice. Source type 23: SourceGroup the vendor, SourceEntry the item.
+DELETE FROM `npc_vendor` WHERE `entry` = 9506000;
+INSERT INTO `npc_vendor` (`entry`, `slot`, `item`, `maxcount`, `incrtime`, `ExtendedCost`, `VerifiedBuild`) VALUES
+(9506000, 0, 400537, 0, 0, 90430, 0),
+(9506000, 1, 400538, 0, 0, 90431, 0),
+(9506000, 2, 400539, 0, 0, 90431, 0),
+(9506000, 3, 400540, 0, 0, 90431, 0),
+(9506000, 4, 401179, 0, 0, 90431, 0),
+(9506000, 5, 411180, 0, 0, 90432, 0),
+(9506000, 6, 411211, 0, 0, 90432, 0),
+(9506000, 7, 411212, 0, 0, 90432, 0),
+(9506000, 8, 411213, 0, 0, 90432, 0),
+(9506000, 9, 412413, 0, 0, 90432, 0),
+(9506000, 10, 412537, 0, 0, 90432, 0),
+(9506000, 11, 411200, 0, 0, 90432, 0),
+(9506000, 12, 412412, 0, 0, 90432, 0),
+(9506000, 13, 411184, 0, 0, 90432, 0),
+(9506000, 14, 412197, 0, 0, 90433, 0),
+(9506000, 15, 410504, 0, 0, 90433, 0);
+
+DELETE FROM `conditions` WHERE `SourceTypeOrReferenceId` = 23 AND `SourceGroup` = 9506000;
+INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry`, `SourceId`, `ElseGroup`, `ConditionTypeOrReference`, `ConditionTarget`, `ConditionValue1`, `ConditionValue2`, `ConditionValue3`, `NegativeCondition`, `ErrorType`, `ErrorTextId`, `ScriptName`, `Comment`) VALUES
+(23, 9506000, 400537, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Bone-White Primal Raptor, after Ju''zaro''s quest'),
+(23, 9506000, 400537, 0, 0, 25, 0, 400537, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Bone-White Primal Raptor, not known yet'),
+(23, 9506000, 400538, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Red Primal Raptor, after Ju''zaro''s quest'),
+(23, 9506000, 400538, 0, 0, 25, 0, 400538, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Red Primal Raptor, not known yet'),
+(23, 9506000, 400539, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Black Primal Raptor, after Ju''zaro''s quest'),
+(23, 9506000, 400539, 0, 0, 25, 0, 400539, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Black Primal Raptor, not known yet'),
+(23, 9506000, 400540, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Green Primal Raptor, after Ju''zaro''s quest'),
+(23, 9506000, 400540, 0, 0, 25, 0, 400540, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Green Primal Raptor, not known yet'),
+(23, 9506000, 401179, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Palehide Direhorn, after Ju''zaro''s quest'),
+(23, 9506000, 401179, 0, 0, 25, 0, 401179, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Palehide Direhorn, not known yet'),
+(23, 9506000, 411180, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Kneebiter, after Ju''zaro''s quest'),
+(23, 9506000, 411180, 0, 0, 25, 0, 411180, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Zandalari Kneebiter, not known yet'),
+(23, 9506000, 411211, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Anklerender, after Ju''zaro''s quest'),
+(23, 9506000, 411211, 0, 0, 25, 0, 411211, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Zandalari Anklerender, not known yet'),
+(23, 9506000, 411212, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Footslasher, after Ju''zaro''s quest'),
+(23, 9506000, 411212, 0, 0, 25, 0, 411212, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Zandalari Footslasher, not known yet'),
+(23, 9506000, 411213, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Toenibbler, after Ju''zaro''s quest'),
+(23, 9506000, 411213, 0, 0, 25, 0, 411213, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Zandalari Toenibbler, not known yet'),
+(23, 9506000, 412413, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Shinchomper, after Ju''zaro''s quest'),
+(23, 9506000, 412413, 0, 0, 25, 0, 412413, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Zandalari Shinchomper, not known yet'),
+(23, 9506000, 412537, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Baby Zandalari Raptor, after Ju''zaro''s quest'),
+(23, 9506000, 412537, 0, 0, 25, 0, 412537, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Baby Zandalari Raptor, not known yet'),
+(23, 9506000, 411200, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Pygmy Direhorn, after Ju''zaro''s quest'),
+(23, 9506000, 411200, 0, 0, 25, 0, 411200, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Pygmy Direhorn, not known yet'),
+(23, 9506000, 412412, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tiny Direhorn, after Ju''zaro''s quest'),
+(23, 9506000, 412412, 0, 0, 25, 0, 412412, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Tiny Direhorn, not known yet'),
+(23, 9506000, 411184, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Stunted Direhorn, after Ju''zaro''s quest'),
+(23, 9506000, 411184, 0, 0, 25, 0, 411184, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Stunted Direhorn, not known yet'),
+(23, 9506000, 412197, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Direhorn Hatchling, after Ju''zaro''s quest'),
+(23, 9506000, 412197, 0, 0, 25, 0, 412197, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Direhorn Hatchling, not known yet'),
+(23, 9506000, 410504, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Diemetradon Hatchling, after Ju''zaro''s quest'),
+(23, 9506000, 410504, 0, 0, 25, 0, 410504, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Diemetradon Hatchling, not known yet');
 
 -- ---------------------------------------------------------------------------------------------
 -- The rares
@@ -422,74 +379,75 @@ INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_
 -- Loot
 -- ---------------------------------------------------------------------------------------------
 
--- Bones: QuestRequired 1, so only players who still need bones for one of Ju'zaro's quests see
--- them. About 4-5 a kill from the crater's beasts, 15-25 from its elites and far more from the
--- rares: roughly twelve hours of hunting for 9,999 alone. Eggs: a reference (below) that only
--- players with one of the quests taken can see.
+-- Bones and eggs drop for players on Ju'zaro's quest (type 9: taken, not yet complete) or who
+-- have done it (type 8), and for nobody else: one ElseGroup each, on every bone row (source type 1,
+-- creature loot) and on the egg reference (source type 10). About 4-5 bones a kill from the
+-- crater's beasts, 15-25 from its elites and far more from the rares: roughly twelve hours of
+-- hunting for 9,999 alone. Rows with these conditions are each player's own, like quest loot.
 DELETE FROM `creature_loot_template` WHERE `Item` IN (1963, 9506000) AND `Entry` IN (6505, 6506, 6507, 6508, 9162, 9163, 9164, 9165, 9166, 9167, 6517, 6518, 6519, 6527, 6501, 6502, 6503, 6504, 6498, 6581, 6583, 6584);
 DELETE FROM `creature_loot_template` WHERE `Entry` BETWEEN 9506001 AND 9506009;
 INSERT INTO `creature_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `QuestRequired`, `LootMode`, `GroupId`, `MinCount`, `MaxCount`, `Comment`) VALUES
-(6505, 1963, 0, 100, 1, 1, 0, 3, 6, 'mod-primal-bones: Ravasaur - Primal Bone'),
+(6505, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Ravasaur - Primal Bone'),
 (6505, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur - Primal Egg'),
-(6506, 1963, 0, 100, 1, 1, 0, 3, 6, 'mod-primal-bones: Ravasaur Runner - Primal Bone'),
+(6506, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Ravasaur Runner - Primal Bone'),
 (6506, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur Runner - Primal Egg'),
-(6507, 1963, 0, 100, 1, 1, 0, 3, 6, 'mod-primal-bones: Ravasaur Hunter - Primal Bone'),
+(6507, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Ravasaur Hunter - Primal Bone'),
 (6507, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur Hunter - Primal Egg'),
-(6508, 1963, 0, 100, 1, 1, 0, 3, 6, 'mod-primal-bones: Venomhide Ravasaur - Primal Bone'),
+(6508, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Venomhide Ravasaur - Primal Bone'),
 (6508, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Venomhide Ravasaur - Primal Egg'),
-(9162, 1963, 0, 100, 1, 1, 0, 3, 6, 'mod-primal-bones: Young Diemetradon - Primal Bone'),
+(9162, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Young Diemetradon - Primal Bone'),
 (9162, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Young Diemetradon - Primal Egg'),
-(9163, 1963, 0, 100, 1, 1, 0, 3, 6, 'mod-primal-bones: Diemetradon - Primal Bone'),
+(9163, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Diemetradon - Primal Bone'),
 (9163, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Diemetradon - Primal Egg'),
-(9164, 1963, 0, 100, 1, 1, 0, 3, 6, 'mod-primal-bones: Elder Diemetradon - Primal Bone'),
+(9164, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Elder Diemetradon - Primal Bone'),
 (9164, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Elder Diemetradon - Primal Egg'),
-(9165, 1963, 0, 100, 1, 1, 0, 3, 6, 'mod-primal-bones: Fledgling Pterrordax - Primal Bone'),
+(9165, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Fledgling Pterrordax - Primal Bone'),
 (9165, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Fledgling Pterrordax - Primal Egg'),
-(9166, 1963, 0, 100, 1, 1, 0, 3, 6, 'mod-primal-bones: Pterrordax - Primal Bone'),
+(9166, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Pterrordax - Primal Bone'),
 (9166, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Pterrordax - Primal Egg'),
-(9167, 1963, 0, 100, 1, 1, 0, 3, 6, 'mod-primal-bones: Frenzied Pterrordax - Primal Bone'),
+(9167, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Frenzied Pterrordax - Primal Bone'),
 (9167, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Frenzied Pterrordax - Primal Egg'),
-(6517, 1963, 0, 100, 1, 1, 0, 2, 4, 'mod-primal-bones: Tar Beast - Primal Bone'),
+(6517, 1963, 0, 100, 0, 1, 0, 2, 4, 'mod-primal-bones: Tar Beast - Primal Bone'),
 (6517, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Beast - Primal Egg'),
-(6518, 1963, 0, 100, 1, 1, 0, 2, 4, 'mod-primal-bones: Tar Lurker - Primal Bone'),
+(6518, 1963, 0, 100, 0, 1, 0, 2, 4, 'mod-primal-bones: Tar Lurker - Primal Bone'),
 (6518, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Lurker - Primal Egg'),
-(6519, 1963, 0, 100, 1, 1, 0, 2, 4, 'mod-primal-bones: Tar Lord - Primal Bone'),
+(6519, 1963, 0, 100, 0, 1, 0, 2, 4, 'mod-primal-bones: Tar Lord - Primal Bone'),
 (6519, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Lord - Primal Egg'),
-(6527, 1963, 0, 100, 1, 1, 0, 2, 4, 'mod-primal-bones: Tar Creeper - Primal Bone'),
+(6527, 1963, 0, 100, 0, 1, 0, 2, 4, 'mod-primal-bones: Tar Creeper - Primal Bone'),
 (6527, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Creeper - Primal Egg'),
-(6501, 1963, 0, 100, 1, 1, 0, 15, 25, 'mod-primal-bones: Stegodon - Primal Bone'),
+(6501, 1963, 0, 100, 0, 1, 0, 15, 25, 'mod-primal-bones: Stegodon - Primal Bone'),
 (6501, 9506000, 9506000, 2, 0, 1, 0, 1, 1, 'mod-primal-bones: Stegodon - Primal Egg'),
-(6502, 1963, 0, 100, 1, 1, 0, 15, 25, 'mod-primal-bones: Plated Stegodon - Primal Bone'),
+(6502, 1963, 0, 100, 0, 1, 0, 15, 25, 'mod-primal-bones: Plated Stegodon - Primal Bone'),
 (6502, 9506000, 9506000, 2, 0, 1, 0, 1, 1, 'mod-primal-bones: Plated Stegodon - Primal Egg'),
-(6503, 1963, 0, 100, 1, 1, 0, 15, 25, 'mod-primal-bones: Spiked Stegodon - Primal Bone'),
+(6503, 1963, 0, 100, 0, 1, 0, 15, 25, 'mod-primal-bones: Spiked Stegodon - Primal Bone'),
 (6503, 9506000, 9506000, 2, 0, 1, 0, 1, 1, 'mod-primal-bones: Spiked Stegodon - Primal Egg'),
-(6504, 1963, 0, 100, 1, 1, 0, 15, 25, 'mod-primal-bones: Thunderstomp Stegodon - Primal Bone'),
+(6504, 1963, 0, 100, 0, 1, 0, 15, 25, 'mod-primal-bones: Thunderstomp Stegodon - Primal Bone'),
 (6504, 9506000, 9506000, 2, 0, 1, 0, 1, 1, 'mod-primal-bones: Thunderstomp Stegodon - Primal Egg'),
-(6498, 1963, 0, 100, 1, 1, 0, 15, 25, 'mod-primal-bones: Devilsaur - Primal Bone'),
+(6498, 1963, 0, 100, 0, 1, 0, 15, 25, 'mod-primal-bones: Devilsaur - Primal Bone'),
 (6498, 9506000, 9506000, 2, 0, 1, 0, 1, 1, 'mod-primal-bones: Devilsaur - Primal Egg'),
-(6581, 1963, 0, 100, 1, 1, 0, 50, 80, 'mod-primal-bones: Ravasaur Matriarch - Primal Bone'),
+(6581, 1963, 0, 100, 0, 1, 0, 50, 80, 'mod-primal-bones: Ravasaur Matriarch - Primal Bone'),
 (6581, 9506000, 9506000, 25, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur Matriarch - Primal Egg'),
-(6583, 1963, 0, 100, 1, 1, 0, 100, 150, 'mod-primal-bones: Gruff - Primal Bone'),
+(6583, 1963, 0, 100, 0, 1, 0, 100, 150, 'mod-primal-bones: Gruff - Primal Bone'),
 (6583, 9506000, 9506000, 25, 0, 1, 0, 1, 1, 'mod-primal-bones: Gruff - Primal Egg'),
-(6584, 1963, 0, 100, 1, 1, 0, 150, 250, 'mod-primal-bones: King Mosh - Primal Bone'),
+(6584, 1963, 0, 100, 0, 1, 0, 150, 250, 'mod-primal-bones: King Mosh - Primal Bone'),
 (6584, 9506000, 9506000, 25, 0, 1, 0, 1, 1, 'mod-primal-bones: King Mosh - Primal Egg'),
-(9506001, 1963, 0, 100, 1, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (dark) - Primal Bone'),
+(9506001, 1963, 0, 100, 0, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (dark) - Primal Bone'),
 (9506001, 9506000, 9506000, 100, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (dark) - Primal Egg'),
-(9506005, 1963, 0, 100, 1, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (blue) - Primal Bone'),
+(9506005, 1963, 0, 100, 0, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (blue) - Primal Bone'),
 (9506005, 9506000, 9506000, 100, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (blue) - Primal Egg'),
-(9506006, 1963, 0, 100, 1, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (green) - Primal Bone'),
+(9506006, 1963, 0, 100, 0, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (green) - Primal Bone'),
 (9506006, 9506000, 9506000, 100, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (green) - Primal Egg'),
-(9506007, 1963, 0, 100, 1, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (pale) - Primal Bone'),
+(9506007, 1963, 0, 100, 0, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (pale) - Primal Bone'),
 (9506007, 9506000, 9506000, 100, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (pale) - Primal Egg'),
-(9506008, 1963, 0, 100, 1, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (brown) - Primal Bone'),
+(9506008, 1963, 0, 100, 0, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (brown) - Primal Bone'),
 (9506008, 9506000, 9506000, 100, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (brown) - Primal Egg'),
-(9506002, 1963, 0, 100, 1, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Slate) - Primal Bone'),
+(9506002, 1963, 0, 100, 0, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Slate) - Primal Bone'),
 (9506002, 9506000, 9506000, 50, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Slate) - Primal Egg'),
-(9506003, 1963, 0, 100, 1, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Amber) - Primal Bone'),
+(9506003, 1963, 0, 100, 0, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Amber) - Primal Bone'),
 (9506003, 9506000, 9506000, 50, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Amber) - Primal Egg'),
-(9506004, 1963, 0, 100, 1, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Jade) - Primal Bone'),
+(9506004, 1963, 0, 100, 0, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Jade) - Primal Bone'),
 (9506004, 9506000, 9506000, 50, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Jade) - Primal Egg'),
-(9506009, 1963, 0, 100, 1, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Crimson) - Primal Bone'),
+(9506009, 1963, 0, 100, 0, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Crimson) - Primal Bone'),
 (9506009, 9506000, 9506000, 50, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Crimson) - Primal Egg'),
 (9506001, 400533, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (dark) - Cobalt Primordial Direhorn'),
 (9506005, 401038, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (blue) - Zandalari Direhorn'),
@@ -501,30 +459,79 @@ INSERT INTO `creature_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `Q
 (9506004, 400536, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Jade Primordial Direhorn'),
 (9506009, 400546, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Crimson Primal Direhorn');
 
+DELETE FROM `conditions` WHERE `SourceTypeOrReferenceId` = 1 AND `SourceEntry` = 1963 AND `SourceGroup` IN (6505, 6506, 6507, 6508, 9162, 9163, 9164, 9165, 9166, 9167, 6517, 6518, 6519, 6527, 6501, 6502, 6503, 6504, 6498, 6581, 6583, 6584, 9506001, 9506005, 9506006, 9506007, 9506008, 9506002, 9506003, 9506004, 9506009);
+INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry`, `SourceId`, `ElseGroup`, `ConditionTypeOrReference`, `ConditionTarget`, `ConditionValue1`, `ConditionValue2`, `ConditionValue3`, `NegativeCondition`, `ErrorType`, `ErrorTextId`, `ScriptName`, `Comment`) VALUES
+(1, 6505, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Ravasaur - bones while on Ju''zaro''s quest'),
+(1, 6505, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Ravasaur - bones once his shop is open'),
+(1, 6506, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Ravasaur Runner - bones while on Ju''zaro''s quest'),
+(1, 6506, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Ravasaur Runner - bones once his shop is open'),
+(1, 6507, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Ravasaur Hunter - bones while on Ju''zaro''s quest'),
+(1, 6507, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Ravasaur Hunter - bones once his shop is open'),
+(1, 6508, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Venomhide Ravasaur - bones while on Ju''zaro''s quest'),
+(1, 6508, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Venomhide Ravasaur - bones once his shop is open'),
+(1, 9162, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Young Diemetradon - bones while on Ju''zaro''s quest'),
+(1, 9162, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Young Diemetradon - bones once his shop is open'),
+(1, 9163, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Diemetradon - bones while on Ju''zaro''s quest'),
+(1, 9163, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Diemetradon - bones once his shop is open'),
+(1, 9164, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Elder Diemetradon - bones while on Ju''zaro''s quest'),
+(1, 9164, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Elder Diemetradon - bones once his shop is open'),
+(1, 9165, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Fledgling Pterrordax - bones while on Ju''zaro''s quest'),
+(1, 9165, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Fledgling Pterrordax - bones once his shop is open'),
+(1, 9166, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Pterrordax - bones while on Ju''zaro''s quest'),
+(1, 9166, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Pterrordax - bones once his shop is open'),
+(1, 9167, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Frenzied Pterrordax - bones while on Ju''zaro''s quest'),
+(1, 9167, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Frenzied Pterrordax - bones once his shop is open'),
+(1, 6517, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tar Beast - bones while on Ju''zaro''s quest'),
+(1, 6517, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tar Beast - bones once his shop is open'),
+(1, 6518, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tar Lurker - bones while on Ju''zaro''s quest'),
+(1, 6518, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tar Lurker - bones once his shop is open'),
+(1, 6519, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tar Lord - bones while on Ju''zaro''s quest'),
+(1, 6519, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tar Lord - bones once his shop is open'),
+(1, 6527, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tar Creeper - bones while on Ju''zaro''s quest'),
+(1, 6527, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tar Creeper - bones once his shop is open'),
+(1, 6501, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Stegodon - bones while on Ju''zaro''s quest'),
+(1, 6501, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Stegodon - bones once his shop is open'),
+(1, 6502, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Plated Stegodon - bones while on Ju''zaro''s quest'),
+(1, 6502, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Plated Stegodon - bones once his shop is open'),
+(1, 6503, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Spiked Stegodon - bones while on Ju''zaro''s quest'),
+(1, 6503, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Spiked Stegodon - bones once his shop is open'),
+(1, 6504, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Thunderstomp Stegodon - bones while on Ju''zaro''s quest'),
+(1, 6504, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Thunderstomp Stegodon - bones once his shop is open'),
+(1, 6498, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Devilsaur - bones while on Ju''zaro''s quest'),
+(1, 6498, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Devilsaur - bones once his shop is open'),
+(1, 6581, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Ravasaur Matriarch - bones while on Ju''zaro''s quest'),
+(1, 6581, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Ravasaur Matriarch - bones once his shop is open'),
+(1, 6583, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Gruff - bones while on Ju''zaro''s quest'),
+(1, 6583, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Gruff - bones once his shop is open'),
+(1, 6584, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: King Mosh - bones while on Ju''zaro''s quest'),
+(1, 6584, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: King Mosh - bones once his shop is open'),
+(1, 9506001, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tarborn Tyrant (dark) - bones while on Ju''zaro''s quest'),
+(1, 9506001, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tarborn Tyrant (dark) - bones once his shop is open'),
+(1, 9506005, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tarborn Tyrant (blue) - bones while on Ju''zaro''s quest'),
+(1, 9506005, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tarborn Tyrant (blue) - bones once his shop is open'),
+(1, 9506006, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tarborn Tyrant (green) - bones while on Ju''zaro''s quest'),
+(1, 9506006, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tarborn Tyrant (green) - bones once his shop is open'),
+(1, 9506007, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tarborn Tyrant (pale) - bones while on Ju''zaro''s quest'),
+(1, 9506007, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tarborn Tyrant (pale) - bones once his shop is open'),
+(1, 9506008, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tarborn Tyrant (brown) - bones while on Ju''zaro''s quest'),
+(1, 9506008, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Tarborn Tyrant (brown) - bones once his shop is open'),
+(1, 9506002, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Warbringer (Slate) - bones while on Ju''zaro''s quest'),
+(1, 9506002, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Warbringer (Slate) - bones once his shop is open'),
+(1, 9506003, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Warbringer (Amber) - bones while on Ju''zaro''s quest'),
+(1, 9506003, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Warbringer (Amber) - bones once his shop is open'),
+(1, 9506004, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Warbringer (Jade) - bones while on Ju''zaro''s quest'),
+(1, 9506004, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Warbringer (Jade) - bones once his shop is open'),
+(1, 9506009, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Warbringer (Crimson) - bones while on Ju''zaro''s quest'),
+(1, 9506009, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Warbringer (Crimson) - bones once his shop is open');
+
 DELETE FROM `reference_loot_template` WHERE `Entry` = 9506000;
 INSERT INTO `reference_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `QuestRequired`, `LootMode`, `GroupId`, `MinCount`, `MaxCount`, `Comment`) VALUES
 (9506000, 23357, 0, 100, 0, 1, 0, 1, 1, 'mod-primal-bones: Primal Egg');
 
--- Source type 10 (reference loot): any one of Ju'zaro's quests in the log (type 9, quest taken),
--- one ElseGroup each.
 DELETE FROM `conditions` WHERE `SourceTypeOrReferenceId` = 10 AND `SourceGroup` = 9506000;
 INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry`, `SourceId`, `ElseGroup`, `ConditionTypeOrReference`, `ConditionTarget`, `ConditionValue1`, `ConditionValue2`, `ConditionValue3`, `NegativeCondition`, `ErrorType`, `ErrorTextId`, `ScriptName`, `Comment`) VALUES
-(10, 9506000, 23357, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg needs a bone quest'),
-(10, 9506000, 23357, 0, 1, 9, 0, 9506001, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg needs a bone quest'),
-(10, 9506000, 23357, 0, 2, 9, 0, 9506002, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg needs a bone quest'),
-(10, 9506000, 23357, 0, 3, 9, 0, 9506003, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg needs a bone quest'),
-(10, 9506000, 23357, 0, 4, 9, 0, 9506004, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg needs a bone quest'),
-(10, 9506000, 23357, 0, 5, 9, 0, 9506005, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg needs a bone quest'),
-(10, 9506000, 23357, 0, 6, 9, 0, 9506006, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg needs a bone quest'),
-(10, 9506000, 23357, 0, 7, 9, 0, 9506007, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg needs a bone quest'),
-(10, 9506000, 23357, 0, 8, 9, 0, 9506008, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg needs a bone quest'),
-(10, 9506000, 23357, 0, 9, 9, 0, 9506009, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg needs a bone quest'),
-(10, 9506000, 23357, 0, 10, 9, 0, 9506010, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg needs a bone quest'),
-(10, 9506000, 23357, 0, 11, 9, 0, 9506011, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg needs a bone quest'),
-(10, 9506000, 23357, 0, 12, 9, 0, 9506012, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg needs a bone quest'),
-(10, 9506000, 23357, 0, 13, 9, 0, 9506013, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg needs a bone quest'),
-(10, 9506000, 23357, 0, 14, 9, 0, 9506014, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg needs a bone quest'),
-(10, 9506000, 23357, 0, 15, 9, 0, 9506015, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg needs a bone quest');
+(10, 9506000, 23357, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg while on Ju''zaro''s quest'),
+(10, 9506000, 23357, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Primal Egg once his shop is open');
 
 -- ---------------------------------------------------------------------------------------------
 -- Spawns
