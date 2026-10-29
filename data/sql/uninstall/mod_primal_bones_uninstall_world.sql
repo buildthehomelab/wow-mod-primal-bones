@@ -2,7 +2,7 @@
 -- database after removing the module. It isn't applied automatically: AzerothCore only runs the
 -- module's db-world folder.
 --
--- Removes Ju'zaro, his quests and camp, the Tarborn Tyrant and the Zandalari Warbringers with
+-- Removes Ju'zaro, his quests and camp, the Tarborn Tyrants and the Zandalari Warbringers with
 -- their spawns and pools, the bone and egg loot on Un'Goro's creatures, and puts the three
 -- repurposed items back the way stock AzerothCore has them. Bones and eggs that players already
 -- own turn back into those stock items (Deprecated Bone Chips, NPC Equip 20798/23357); delete
@@ -16,7 +16,7 @@ DELETE FROM `gameobject` WHERE `guid` BETWEEN 9506000 AND 9506099;
 
 DELETE FROM `conditions` WHERE `SourceTypeOrReferenceId` IN (10, 14) AND `SourceGroup` = 9506000;
 DELETE FROM `reference_loot_template` WHERE `Entry` = 9506000;
-DELETE FROM `creature_loot_template` WHERE `Item` IN (1963, 9506000) OR `Entry` BETWEEN 9506001 AND 9506004;
+DELETE FROM `creature_loot_template` WHERE `Item` IN (1963, 9506000) OR `Entry` BETWEEN 9506001 AND 9506008;
 DELETE FROM `item_loot_template` WHERE `Entry` = 20798;
 
 DELETE FROM `creature_queststarter` WHERE `quest` BETWEEN 9506000 AND 9506015;
@@ -27,12 +27,12 @@ DELETE FROM `quest_template` WHERE `ID` BETWEEN 9506000 AND 9506015;
 
 DELETE FROM `gossip_menu` WHERE `MenuID` = 9506000;
 DELETE FROM `npc_text` WHERE `ID` BETWEEN 9506000 AND 9506005;
-DELETE FROM `smart_scripts` WHERE `source_type` = 0 AND `entryorguid` BETWEEN 9506000 AND 9506004;
-DELETE FROM `creature_text` WHERE `CreatureID` BETWEEN 9506000 AND 9506004;
-DELETE FROM `creature_template_addon` WHERE `entry` BETWEEN 9506000 AND 9506004;
-DELETE FROM `creature_equip_template` WHERE `CreatureID` BETWEEN 9506000 AND 9506004;
-DELETE FROM `creature_template_model` WHERE `CreatureID` BETWEEN 9506000 AND 9506004;
-DELETE FROM `creature_template` WHERE `entry` BETWEEN 9506000 AND 9506004;
+DELETE FROM `smart_scripts` WHERE `source_type` = 0 AND `entryorguid` BETWEEN 9506000 AND 9506008;
+DELETE FROM `creature_text` WHERE `CreatureID` BETWEEN 9506000 AND 9506008;
+DELETE FROM `creature_template_addon` WHERE `entry` BETWEEN 9506000 AND 9506008;
+DELETE FROM `creature_equip_template` WHERE `CreatureID` BETWEEN 9506000 AND 9506008;
+DELETE FROM `creature_template_model` WHERE `CreatureID` BETWEEN 9506000 AND 9506008;
+DELETE FROM `creature_template` WHERE `entry` BETWEEN 9506000 AND 9506008;
 
 -- Stock AzerothCore values of the repurposed items.
 UPDATE `item_template` SET `class` = 7, `subclass` = 11, `name` = 'Deprecated Bone Chips', `Quality` = 1, `Flags` = 16,
