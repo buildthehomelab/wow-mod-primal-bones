@@ -2,9 +2,9 @@
 -- database after removing the module. It isn't applied automatically: AzerothCore only runs the
 -- module's db-world folder.
 --
--- Removes Ju'zaro, his quest, shop, prices and camp, the Tarborn Tyrants and the Zandalari Warbringers with
--- their spawns and pools, the bone and egg loot on Un'Goro's creatures, and puts the three
--- repurposed items back the way stock AzerothCore has them. Bones and eggs that players already
+-- Removes Ju'zaro, his quest, shop, prices and camp (with its props), the Tarborn Tyrants and the
+-- Zandalari Warbringers with their spawns and pools, the bone and egg loot on Un'Goro's creatures,
+-- and puts the three repurposed items back the way stock AzerothCore has them. Bones and eggs that players already
 -- own turn back into those stock items (Deprecated Bone Chips, NPC Equip 20798/23357); delete
 -- them from the characters database if you want them gone (item_instance.itemEntry). Mounts and
 -- pets players earned stay learned. Idempotent: safe to run again.
@@ -13,6 +13,7 @@ DELETE FROM `pool_creature` WHERE `pool_entry` IN (9506001, 9506002);
 DELETE FROM `pool_template` WHERE `entry` IN (9506001, 9506002);
 DELETE FROM `creature` WHERE `guid` BETWEEN 9506000 AND 9506099;
 DELETE FROM `gameobject` WHERE `guid` BETWEEN 9506000 AND 9506099;
+DELETE FROM `gameobject_template` WHERE `entry` BETWEEN 9506000 AND 9506099;
 
 DELETE FROM `conditions` WHERE `SourceTypeOrReferenceId` IN (10, 14, 15, 23) AND `SourceGroup` = 9506000;
 DELETE FROM `conditions` WHERE `SourceTypeOrReferenceId` = 1 AND `SourceEntry` = 1963;

@@ -89,7 +89,8 @@ see the file's header for what happens to bones and eggs players still carry.
 
 ## IDs
 
-Creature, quest, npc_text, gossip menu, reference loot, pool and spawn guids 9506000-9506099;
+Creature, gameobject template, quest, npc_text, gossip menu, reference loot, pool and spawn guids
+9506000-9506099;
 ItemExtendedCost 90430-90439.
 Items 1963, 20798 and 23357 (repurposed). New loot rows on 22 stock Un'Goro creatures (bones and
 an egg reference only; their own loot is untouched).

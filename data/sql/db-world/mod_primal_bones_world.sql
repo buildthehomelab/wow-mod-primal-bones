@@ -625,10 +625,29 @@ INSERT INTO `pool_creature` (`guid`, `pool_entry`, `chance`, `description`) VALU
 (9506038, 9506002, 0, 'Zandalari Warbringer'),
 (9506039, 9506002, 0, 'Zandalari Warbringer');
 
--- Ju'zaro's camp: a campfire (a cooking fire for players too) and a few bone piles.
+-- Ju'zaro's camp: a troll bonfire (a cooking fire for players too), bone piles, and the module's
+-- own props: plain decoration (type 5) on stock client models, since the stock objects that use
+-- these models are quest items, chests or traps. 9506000-9506099 are this module's.
+DELETE FROM `gameobject_template` WHERE `entry` BETWEEN 9506000 AND 9506099;
+INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `size`, `AIName`, `ScriptName`, `VerifiedBuild`) VALUES
+(9506000, 5, 7202, 'Raptor Nest', '', '', '', 1, '', '', 0),
+(9506001, 5, 321, 'Primal Eggs', '', '', '', 0.8, '', '', 0),
+(9506002, 5, 9259, 'Primal Eggs', '', '', '', 0.8, '', '', 0),
+(9506003, 5, 7597, 'Ribcage', '', '', '', 1, '', '', 0),
+(9506004, 5, 653, 'Tiki Head', '', '', '', 1, '', '', 0),
+(9506005, 5, 7535, 'Zandalari War Drum', '', '', '', 1, '', '', 0),
+(9506006, 5, 7493, 'Supply Sacks', '', '', '', 1, '', '', 0),
+(9506007, 5, 7954, 'Bat Totem', '', '', '', 1, '', '', 0);
+
 INSERT INTO `gameobject` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`, `Comment`) VALUES
 (9506000, 20977, 1, 1, 1, -6534.30, -1134.40, -265.22, 0.00, 0, 0, 0.000000, 1.000000, 300, 100, 1, 'mod-primal-bones: Ju''zaro''s troll bonfire'),
-(9506001, 184108, 1, 1, 1, -6531.27, -1105.45, -269.96, 5.72, 0, 0, 0.276947, -0.960885, 300, 100, 1, 'mod-primal-bones: dragon skeleton behind Ju''zaro''s camp'),
-(9506002, 181191, 1, 1, 1, -6540.12, -1130.22, -265.63, 0.24, 0, 0, 0.119101, 0.992882, 300, 100, 1, 'mod-primal-bones: bone pile, Ju''zaro''s camp'),
-(9506003, 181192, 1, 1, 1, -6530.71, -1128.98, -266.31, 5.22, 0, 0, 0.506064, -0.862496, 300, 100, 1, 'mod-primal-bones: bone pile, Ju''zaro''s camp'),
-(9506004, 181193, 1, 1, 1, -6542.46, -1131.81, -265.21, 3.62, 0, 0, 0.971295, -0.237878, 300, 100, 1, 'mod-primal-bones: spine, Ju''zaro''s camp');
+(9506001, 181191, 1, 1, 1, -6540.12, -1130.22, -265.63, 0.24, 0, 0, 0.119101, 0.992882, 300, 100, 1, 'mod-primal-bones: bone pile, Ju''zaro''s camp'),
+(9506002, 181193, 1, 1, 1, -6542.46, -1131.81, -265.21, 3.62, 0, 0, 0.971295, -0.237878, 300, 100, 1, 'mod-primal-bones: spine, Ju''zaro''s camp'),
+(9506003, 9506000, 1, 1, 1, -6531.20, -1128.89, -266.29, 5.12, 0, 0, 0.548539, -0.836125, 300, 100, 1, 'mod-primal-bones: raptor nest, Ju''zaro''s camp'),
+(9506004, 9506001, 1, 1, 1, -6531.20, -1128.89, -266.29, 0.14, 0, 0, 0.069329, 0.997594, 300, 100, 1, 'mod-primal-bones: primal eggs in the nest, Ju''zaro''s camp'),
+(9506005, 9506002, 1, 1, 1, -6529.82, -1130.68, -266.13, 1.34, 0, 0, 0.620503, 0.784204, 300, 100, 1, 'mod-primal-bones: primal eggs, Ju''zaro''s camp'),
+(9506006, 9506003, 1, 1, 1, -6538.22, -1120.41, -267.53, 5.92, 0, 0, 0.179635, -0.983733, 300, 100, 1, 'mod-primal-bones: ribcage behind Ju''zaro''s camp'),
+(9506007, 9506004, 1, 1, 1, -6539.50, -1134.93, -264.78, 4.52, 0, 0, 0.771131, -0.636676, 300, 100, 1, 'mod-primal-bones: tiki head, Ju''zaro''s camp'),
+(9506008, 9506005, 1, 1, 1, -6540.43, -1127.62, -266.15, 4.82, 0, 0, 0.667328, -0.744764, 300, 100, 1, 'mod-primal-bones: war drum, Ju''zaro''s camp'),
+(9506009, 9506006, 1, 1, 1, -6533.86, -1126.85, -266.48, 0.64, 0, 0, 0.313982, 0.949429, 300, 100, 1, 'mod-primal-bones: supply sacks, Ju''zaro''s camp'),
+(9506010, 9506007, 1, 1, 1, -6534.38, -1137.44, -264.81, 4.52, 0, 0, 0.771131, -0.636676, 300, 100, 1, 'mod-primal-bones: bat totem, Ju''zaro''s camp');
