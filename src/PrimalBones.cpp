@@ -10,13 +10,21 @@
  * The core calls the hook while the expired egg still takes up its bag slot, so a player whose
  * bags are otherwise full gets the hatched egg by mail instead of losing it.
  *
+ * Every hatched egg is a Red, Black or Green Primal Raptor, and one its owner doesn't know yet:
+ * the loot group's conditions can't steer that, the core rolls a group before it checks them. So
+ * when the egg's loot is rolled, a known colour's chance goes to 0 and the others share 100%. An
+ * owner who knows all three rolls none of them and gets the group's equal-chance entry, boss
+ * coins.
+ *
  * Released under the MIT License.
  */
 
 #include "Chat.h"
 #include "DatabaseEnv.h"
+#include "GlobalScript.h"
 #include "Item.h"
 #include "ItemScript.h"
+#include "LootMgr.h"
 #include "Mail.h"
 #include "Player.h"
 #include "ScriptMgr.h"
@@ -27,6 +35,17 @@ namespace
     constexpr uint32 ITEM_PRIMAL_EGG = 23357;
     constexpr uint32 ITEM_HATCHED_PRIMAL_EGG = 20798;
     constexpr uint32 NPC_JUZARO = 9506000;
+
+    // Red, Black and Green Primal Raptor: each item teaches the mount spell with its own id.
+    constexpr uint32 EGG_RAPTORS[] = { 400538, 400539, 400540 };
+
+    bool IsEggRaptor(uint32 itemId)
+    {
+        for (uint32 raptor : EGG_RAPTORS)
+            if (raptor == itemId)
+                return true;
+        return false;
+    }
 }
 
 class item_primal_egg : public ItemScript
@@ -59,7 +78,38 @@ public:
     }
 };
 
+class PrimalEggLootScript : public GlobalScript
+{
+public:
+    PrimalEggLootScript() : GlobalScript("PrimalEggLootScript", { GLOBALHOOK_ON_ITEM_ROLL }) { }
+
+    bool OnItemRoll(Player const* player, LootStoreItem const* lootStoreItem, float& chance, Loot& loot, LootStore const& store) override
+    {
+        if (!player || &store != &LootTemplates_Item || !IsEggRaptor(lootStoreItem->itemid))
+            return true;
+
+        Item* egg = player->GetItemByGuid(loot.containerGUID);
+        if (!egg || egg->GetEntry() != ITEM_HATCHED_PRIMAL_EGG)
+            return true;
+
+        if (player->HasSpell(lootStoreItem->itemid))
+        {
+            chance = 0.0f;
+            return true;
+        }
+
+        uint32 unknown = 0;
+        for (uint32 raptor : EGG_RAPTORS)
+            if (!player->HasSpell(raptor))
+                ++unknown;
+
+        chance = 100.0f / unknown;
+        return true;
+    }
+};
+
 void AddPrimalBonesScripts()
 {
     new item_primal_egg();
+    new PrimalEggLootScript();
 }
