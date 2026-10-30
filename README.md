@@ -30,19 +30,23 @@ Raptor**.
   it**. Raptors, diemetradons and pterrordaxes drop 3-6, the tar elementals 2-4, stegodons and
   devilsaurs 15-25, and the crater's rares far more. That's roughly twelve hours of hunting for the
   full 9,999 alone, less in a group. Bones are soulbound and stack to 9,999.
-- **Primal Eggs** drop now and then (1 in 200 from beasts, 1 in 50 from elites, 1 in 10 from the stock rares),
-  again only for players on his quest or past it. An egg hatches **three days** later, offline time
-  included, into a Hatched Primal Egg. Open it: 9% of the time it's one of the three primal
-  raptors, 36% one of the six Zandalari raptor pets, otherwise 100-200 bones.
+- **Primal Eggs** are how you get the Red, Black and Green Primal Raptors. Ju'zaro once sold
+  them for 3,333 bones, so an egg takes about as many kills as 3,333 bones: 1 in 740 beasts,
+  1 in 1,100 tar elementals, 1 in 170 stegodons and devilsaurs (0.135%, 0.09%, 0.6%), and from the
+  rares Ravasaur Matriarch 1.95%, Gruff 3.75%, King Mosh 6%, a Warbringer 2.4%, a Tyrant 6.75%.
+  Again only for players on his quest or past it. An egg hatches **three days** later, offline
+  time included, into a Hatched Primal Egg. Open it and it's always a primal raptor, one you don't
+  have yet. Once you have all three, an egg holds 25 Tarnished Undermine Reals (boss coins)
+  instead.
 - **Tarborn Tyrants**, rare elite primal devilsaurs that claw their way out of the tar on one of
   three spots around the pits, three hours after the last one was killed. There are five, one for
   each of retail's striped primal devilsaur skins, and whichever skin comes up drops its own
   mount (10%): dark the Cobalt Primordial Direhorn, blue the Zandalari Direhorn, green the Savage
   Raptor, pale the Swift Albino Raptor, brown the Golden Primal Direhorn. All ground mounts, like
-  the beasts that drop them. They fight like King Mosh and also drop 200-250 bones, and an egg one time in four.
+  the beasts that drop them. They fight like King Mosh and also drop 200-250 bones, and sometimes an egg.
 - **Zandalari Warbringers**: rare elite Zandalari riding a Slate, Amber or Jade Primordial
   Direhorn or a Crimson Primal Direhorn. One is out at a time, on one of five spots across the
-  crater; an hour after a kill another one rides in, in any colour at any spot. Each drops 60-100 bones, an egg one time in five, and
+  crater; an hour after a kill another one rides in, in any colour at any spot. Each drops 60-100 bones, now and then an egg, and
   sometimes (10%) the direhorn it rides.
 - Both rares announce themselves to the whole crater when they appear.
 
@@ -50,6 +54,9 @@ Raptor**.
 
 - [wow-mod-retail-collection](https://github.com/buildthehomelab/wow-mod-retail-collection): the
   mounts and pets the shop sells and the rares and eggs drop are its items (400000+ and 410000+).
+- [wow-mod-boss-coins](https://github.com/buildthehomelab/wow-mod-boss-coins): its coin (item
+  90410) is what an egg holds once you have all three primal raptors. Without it those eggs are
+  empty.
 - [wow-mod-retail-library](https://github.com/buildthehomelab/wow-mod-retail-library) and its
   client patches: the Warbringers ride its direhorn looks, and the Tarborn Tyrant wears its
   striped primal devilsaur looks (displays 247249, 247271, 247272, 247273 and 276972).

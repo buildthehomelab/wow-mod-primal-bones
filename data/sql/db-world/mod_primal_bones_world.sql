@@ -6,7 +6,8 @@
 --                    would show a question mark. Soulbound, stacks to 9,999, at most 9,999.
 --   item 23357       Primal Egg (repurposed "NPC Equip 23357", egg icon). Hatches after three days,
 --                    offline time included: the module's item script swaps it for
---   item 20798       Hatched Primal Egg (repurposed "NPC Equip 20798", egg icon), which opens.
+--   item 20798       Hatched Primal Egg (repurposed "NPC Equip 20798", egg icon), which opens:
+--                    a Red, Black or Green Primal Raptor you don't have yet, or 25 boss coins.
 --   creature 9506000 Ju'zaro, Zandalar Bonewright, camped on the rim of the Lakkari Tar Pits.
 --   quest 9506000    The Bonewright's Price: 100 bones, and Ju'zaro's shop opens. He sells the
 --                    Bone-White Primal Raptor (9,999 bones), a direhorn (3,333) and pets (500
@@ -22,7 +23,8 @@
 -- Bones and eggs drop for a player who is on Ju'zaro's quest or has done it (loot conditions), and
 -- for nobody else.
 --
--- Needs the item and creature rows of wow-mod-retail-collection (the rewards, 400000+ and 410000+)
+-- Needs the item and creature rows of wow-mod-retail-collection (the rewards, 400000+ and 410000+),
+-- wow-mod-boss-coins' coin (item 90410, what an egg gives once all three raptors are known)
 -- and the looks of wow-mod-retail-library (the direhorns the Warbringers ride and the Tyrant's
 -- striped devilsaur, displays 247249/247271/247272/247273/276972).
 --
@@ -56,20 +58,18 @@ UPDATE `item_template` SET `class` = 15, `subclass` = 0, `name` = 'Hatched Prima
   `description` = 'The shell is split and something is chewing its way out.'
 WHERE `entry` = 20798;
 
--- What hatches: one of the three primal raptor mounts (3% each), one of the six Zandalari raptor
--- pets (6% each), or else a heap of bones (the remaining 55%).
+-- What hatches: one of the three primal raptor mounts, a third each, and no other mount or pet.
+-- The module's loot script (src/PrimalBones.cpp) only lets an egg hatch a colour its owner
+-- doesn't know yet, sharing the odds among the rest. An owner who knows all three gets 25 boss
+-- coins instead (mod-boss-coins' Tarnished Undermine Real 90410; an equal-chance entry, so it
+-- only drops when no raptor does; the raptors stay under 100% together, or the core logs that
+-- it never can).
 DELETE FROM `item_loot_template` WHERE `Entry` = 20798;
 INSERT INTO `item_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `QuestRequired`, `LootMode`, `GroupId`, `MinCount`, `MaxCount`, `Comment`) VALUES
-(20798, 400538, 0, 3, 0, 1, 1, 1, 1, 'mod-primal-bones: Red Primal Raptor'),
-(20798, 400539, 0, 3, 0, 1, 1, 1, 1, 'mod-primal-bones: Black Primal Raptor'),
-(20798, 400540, 0, 3, 0, 1, 1, 1, 1, 'mod-primal-bones: Green Primal Raptor'),
-(20798, 411180, 0, 6, 0, 1, 1, 1, 1, 'mod-primal-bones: Zandalari Kneebiter'),
-(20798, 411211, 0, 6, 0, 1, 1, 1, 1, 'mod-primal-bones: Zandalari Anklerender'),
-(20798, 411212, 0, 6, 0, 1, 1, 1, 1, 'mod-primal-bones: Zandalari Footslasher'),
-(20798, 411213, 0, 6, 0, 1, 1, 1, 1, 'mod-primal-bones: Zandalari Toenibbler'),
-(20798, 412413, 0, 6, 0, 1, 1, 1, 1, 'mod-primal-bones: Zandalari Shinchomper'),
-(20798, 412537, 0, 6, 0, 1, 1, 1, 1, 'mod-primal-bones: Baby Zandalari Raptor'),
-(20798, 1963, 0, 0, 0, 1, 1, 100, 200, 'mod-primal-bones: Primal Bone');
+(20798, 400538, 0, 33.3, 0, 1, 1, 1, 1, 'mod-primal-bones: Red Primal Raptor'),
+(20798, 400539, 0, 33.3, 0, 1, 1, 1, 1, 'mod-primal-bones: Black Primal Raptor'),
+(20798, 400540, 0, 33.3, 0, 1, 1, 1, 1, 'mod-primal-bones: Green Primal Raptor'),
+(20798, 90410, 0, 0, 0, 1, 1, 25, 25, 'mod-primal-bones: Tarnished Undermine Real, once all three raptors are known');
 
 -- ---------------------------------------------------------------------------------------------
 -- Ju'zaro
@@ -374,74 +374,76 @@ INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_
 -- have done it (type 8), and for nobody else: one ElseGroup each, on every bone row (source type 1,
 -- creature loot) and on the egg reference (source type 10). About 4-5 bones a kill from the
 -- crater's beasts, 15-25 from its elites and far more from the rares: roughly twelve hours of
--- hunting for 9,999 alone. Eggs: 1 in 200 from beasts, 1 in 50 from elites, 10% from the stock
--- rares, 20% from a Warbringer and 25% from a Tyrant. Rows with these conditions are each
--- player's own, like quest loot.
+-- hunting for 9,999 alone. Every egg is a primal raptor, which the shop used to sell for 3,333
+-- bones, so an egg takes about the kills 3,333 bones do: egg chance = average bones / 3,333
+-- (beasts 0.135%, tar elementals 0.09%, elites 0.6%, Ravasaur Matriarch 1.95%, Gruff 3.75%,
+-- King Mosh 6%, Warbringer 2.4%, Tyrant 6.75%). Rows with these conditions are each player's
+-- own, like quest loot.
 DELETE FROM `creature_loot_template` WHERE `Item` IN (1963, 9506000) AND `Entry` IN (6505, 6506, 6507, 6508, 9162, 9163, 9164, 9165, 9166, 9167, 6517, 6518, 6519, 6527, 6501, 6502, 6503, 6504, 6498, 6581, 6583, 6584);
 DELETE FROM `creature_loot_template` WHERE `Entry` BETWEEN 9506001 AND 9506009;
 INSERT INTO `creature_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `QuestRequired`, `LootMode`, `GroupId`, `MinCount`, `MaxCount`, `Comment`) VALUES
 (6505, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Ravasaur - Primal Bone'),
-(6505, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur - Primal Egg'),
+(6505, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur - Primal Egg'),
 (6506, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Ravasaur Runner - Primal Bone'),
-(6506, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur Runner - Primal Egg'),
+(6506, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur Runner - Primal Egg'),
 (6507, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Ravasaur Hunter - Primal Bone'),
-(6507, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur Hunter - Primal Egg'),
+(6507, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur Hunter - Primal Egg'),
 (6508, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Venomhide Ravasaur - Primal Bone'),
-(6508, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Venomhide Ravasaur - Primal Egg'),
+(6508, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Venomhide Ravasaur - Primal Egg'),
 (9162, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Young Diemetradon - Primal Bone'),
-(9162, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Young Diemetradon - Primal Egg'),
+(9162, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Young Diemetradon - Primal Egg'),
 (9163, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Diemetradon - Primal Bone'),
-(9163, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Diemetradon - Primal Egg'),
+(9163, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Diemetradon - Primal Egg'),
 (9164, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Elder Diemetradon - Primal Bone'),
-(9164, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Elder Diemetradon - Primal Egg'),
+(9164, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Elder Diemetradon - Primal Egg'),
 (9165, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Fledgling Pterrordax - Primal Bone'),
-(9165, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Fledgling Pterrordax - Primal Egg'),
+(9165, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Fledgling Pterrordax - Primal Egg'),
 (9166, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Pterrordax - Primal Bone'),
-(9166, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Pterrordax - Primal Egg'),
+(9166, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Pterrordax - Primal Egg'),
 (9167, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Frenzied Pterrordax - Primal Bone'),
-(9167, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Frenzied Pterrordax - Primal Egg'),
+(9167, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Frenzied Pterrordax - Primal Egg'),
 (6517, 1963, 0, 100, 0, 1, 0, 2, 4, 'mod-primal-bones: Tar Beast - Primal Bone'),
-(6517, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Beast - Primal Egg'),
+(6517, 9506000, 9506000, 0.09, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Beast - Primal Egg'),
 (6518, 1963, 0, 100, 0, 1, 0, 2, 4, 'mod-primal-bones: Tar Lurker - Primal Bone'),
-(6518, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Lurker - Primal Egg'),
+(6518, 9506000, 9506000, 0.09, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Lurker - Primal Egg'),
 (6519, 1963, 0, 100, 0, 1, 0, 2, 4, 'mod-primal-bones: Tar Lord - Primal Bone'),
-(6519, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Lord - Primal Egg'),
+(6519, 9506000, 9506000, 0.09, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Lord - Primal Egg'),
 (6527, 1963, 0, 100, 0, 1, 0, 2, 4, 'mod-primal-bones: Tar Creeper - Primal Bone'),
-(6527, 9506000, 9506000, 0.5, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Creeper - Primal Egg'),
+(6527, 9506000, 9506000, 0.09, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Creeper - Primal Egg'),
 (6501, 1963, 0, 100, 0, 1, 0, 15, 25, 'mod-primal-bones: Stegodon - Primal Bone'),
-(6501, 9506000, 9506000, 2, 0, 1, 0, 1, 1, 'mod-primal-bones: Stegodon - Primal Egg'),
+(6501, 9506000, 9506000, 0.6, 0, 1, 0, 1, 1, 'mod-primal-bones: Stegodon - Primal Egg'),
 (6502, 1963, 0, 100, 0, 1, 0, 15, 25, 'mod-primal-bones: Plated Stegodon - Primal Bone'),
-(6502, 9506000, 9506000, 2, 0, 1, 0, 1, 1, 'mod-primal-bones: Plated Stegodon - Primal Egg'),
+(6502, 9506000, 9506000, 0.6, 0, 1, 0, 1, 1, 'mod-primal-bones: Plated Stegodon - Primal Egg'),
 (6503, 1963, 0, 100, 0, 1, 0, 15, 25, 'mod-primal-bones: Spiked Stegodon - Primal Bone'),
-(6503, 9506000, 9506000, 2, 0, 1, 0, 1, 1, 'mod-primal-bones: Spiked Stegodon - Primal Egg'),
+(6503, 9506000, 9506000, 0.6, 0, 1, 0, 1, 1, 'mod-primal-bones: Spiked Stegodon - Primal Egg'),
 (6504, 1963, 0, 100, 0, 1, 0, 15, 25, 'mod-primal-bones: Thunderstomp Stegodon - Primal Bone'),
-(6504, 9506000, 9506000, 2, 0, 1, 0, 1, 1, 'mod-primal-bones: Thunderstomp Stegodon - Primal Egg'),
+(6504, 9506000, 9506000, 0.6, 0, 1, 0, 1, 1, 'mod-primal-bones: Thunderstomp Stegodon - Primal Egg'),
 (6498, 1963, 0, 100, 0, 1, 0, 15, 25, 'mod-primal-bones: Devilsaur - Primal Bone'),
-(6498, 9506000, 9506000, 2, 0, 1, 0, 1, 1, 'mod-primal-bones: Devilsaur - Primal Egg'),
+(6498, 9506000, 9506000, 0.6, 0, 1, 0, 1, 1, 'mod-primal-bones: Devilsaur - Primal Egg'),
 (6581, 1963, 0, 100, 0, 1, 0, 50, 80, 'mod-primal-bones: Ravasaur Matriarch - Primal Bone'),
-(6581, 9506000, 9506000, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur Matriarch - Primal Egg'),
+(6581, 9506000, 9506000, 1.95, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur Matriarch - Primal Egg'),
 (6583, 1963, 0, 100, 0, 1, 0, 100, 150, 'mod-primal-bones: Gruff - Primal Bone'),
-(6583, 9506000, 9506000, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Gruff - Primal Egg'),
+(6583, 9506000, 9506000, 3.75, 0, 1, 0, 1, 1, 'mod-primal-bones: Gruff - Primal Egg'),
 (6584, 1963, 0, 100, 0, 1, 0, 150, 250, 'mod-primal-bones: King Mosh - Primal Bone'),
-(6584, 9506000, 9506000, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: King Mosh - Primal Egg'),
+(6584, 9506000, 9506000, 6, 0, 1, 0, 1, 1, 'mod-primal-bones: King Mosh - Primal Egg'),
 (9506001, 1963, 0, 100, 0, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (dark) - Primal Bone'),
-(9506001, 9506000, 9506000, 25, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (dark) - Primal Egg'),
+(9506001, 9506000, 9506000, 6.75, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (dark) - Primal Egg'),
 (9506005, 1963, 0, 100, 0, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (blue) - Primal Bone'),
-(9506005, 9506000, 9506000, 25, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (blue) - Primal Egg'),
+(9506005, 9506000, 9506000, 6.75, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (blue) - Primal Egg'),
 (9506006, 1963, 0, 100, 0, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (green) - Primal Bone'),
-(9506006, 9506000, 9506000, 25, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (green) - Primal Egg'),
+(9506006, 9506000, 9506000, 6.75, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (green) - Primal Egg'),
 (9506007, 1963, 0, 100, 0, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (pale) - Primal Bone'),
-(9506007, 9506000, 9506000, 25, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (pale) - Primal Egg'),
+(9506007, 9506000, 9506000, 6.75, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (pale) - Primal Egg'),
 (9506008, 1963, 0, 100, 0, 1, 0, 200, 250, 'mod-primal-bones: Tarborn Tyrant (brown) - Primal Bone'),
-(9506008, 9506000, 9506000, 25, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (brown) - Primal Egg'),
+(9506008, 9506000, 9506000, 6.75, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (brown) - Primal Egg'),
 (9506002, 1963, 0, 100, 0, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Slate) - Primal Bone'),
-(9506002, 9506000, 9506000, 20, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Slate) - Primal Egg'),
+(9506002, 9506000, 9506000, 2.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Slate) - Primal Egg'),
 (9506003, 1963, 0, 100, 0, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Amber) - Primal Bone'),
-(9506003, 9506000, 9506000, 20, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Amber) - Primal Egg'),
+(9506003, 9506000, 9506000, 2.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Amber) - Primal Egg'),
 (9506004, 1963, 0, 100, 0, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Jade) - Primal Bone'),
-(9506004, 9506000, 9506000, 20, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Jade) - Primal Egg'),
+(9506004, 9506000, 9506000, 2.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Jade) - Primal Egg'),
 (9506009, 1963, 0, 100, 0, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Crimson) - Primal Bone'),
-(9506009, 9506000, 9506000, 20, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Crimson) - Primal Egg'),
+(9506009, 9506000, 9506000, 2.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Crimson) - Primal Egg'),
 (9506001, 400533, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (dark) - Cobalt Primordial Direhorn'),
 (9506005, 401038, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (blue) - Zandalari Direhorn'),
 (9506006, 400418, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (green) - Savage Raptor'),
