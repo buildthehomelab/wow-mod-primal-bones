@@ -19,12 +19,13 @@ Raptor**.
   | Bones | Wares |
   | ----: | --- |
   | 9,999 | Bone-White Primal Raptor |
-  | 3,333 | Red, Black or Green Primal Raptor, Palehide Direhorn |
+  | 3,333 | Palehide Direhorn |
   | 500 | Zandalari Kneebiter, Anklerender, Footslasher, Toenibbler, Shinchomper, Baby Zandalari Raptor; Pygmy, Tiny or Stunted Direhorn |
   | 250 | Direhorn Hatchling, Diemetradon Hatchling |
 
   Everything is paid from the same pile, so a pet now means the white raptor later. A mount or
-  pet you already know drops off the list.
+  pet you already know drops off the list. The Red, Black and Green Primal Raptors aren't for
+  sale: they only hatch from Primal Eggs.
 - **Primal Bones** drop from Un'Goro's beasts **only for players on his quest or who have done
   it**. Raptors, diemetradons and pterrordaxes drop 3-6, the tar elementals 2-4, stegodons and
   devilsaurs 15-25, and the crater's rares far more. That's roughly twelve hours of hunting for the

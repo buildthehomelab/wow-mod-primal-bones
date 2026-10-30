@@ -9,8 +9,8 @@
 --   item 20798       Hatched Primal Egg (repurposed "NPC Equip 20798", egg icon), which opens.
 --   creature 9506000 Ju'zaro, Zandalar Bonewright, camped on the rim of the Lakkari Tar Pits.
 --   quest 9506000    The Bonewright's Price: 100 bones, and Ju'zaro's shop opens. He sells the
---                    Bone-White Primal Raptor (9,999 bones), the other primal raptors and a
---                    direhorn (3,333) and pets (500 and 250), for Primal Bones only (prices:
+--                    Bone-White Primal Raptor (9,999 bones), a direhorn (3,333) and pets (500
+--                    and 250), for Primal Bones only (the other primal raptors only hatch; prices:
 --                    ItemExtendedCost 90430-90433, which the client needs too: tools/build_patch.py).
 --   creatures        Tarborn Tyrant, rare elite primal devilsaur, one entry per striped skin, each
 --   9506001, 9506005 with its own mount; three spawn spots, one Tyrant at a time.
@@ -189,32 +189,23 @@ INSERT INTO `itemextendedcost_dbc` (`ID`, `HonorPoints`, `ArenaPoints`, `ArenaBr
 DELETE FROM `npc_vendor` WHERE `entry` = 9506000;
 INSERT INTO `npc_vendor` (`entry`, `slot`, `item`, `maxcount`, `incrtime`, `ExtendedCost`, `VerifiedBuild`) VALUES
 (9506000, 0, 400537, 0, 0, 90430, 0),
-(9506000, 1, 400538, 0, 0, 90431, 0),
-(9506000, 2, 400539, 0, 0, 90431, 0),
-(9506000, 3, 400540, 0, 0, 90431, 0),
-(9506000, 4, 401179, 0, 0, 90431, 0),
-(9506000, 5, 411180, 0, 0, 90432, 0),
-(9506000, 6, 411211, 0, 0, 90432, 0),
-(9506000, 7, 411212, 0, 0, 90432, 0),
-(9506000, 8, 411213, 0, 0, 90432, 0),
-(9506000, 9, 412413, 0, 0, 90432, 0),
-(9506000, 10, 412537, 0, 0, 90432, 0),
-(9506000, 11, 411200, 0, 0, 90432, 0),
-(9506000, 12, 412412, 0, 0, 90432, 0),
-(9506000, 13, 411184, 0, 0, 90432, 0),
-(9506000, 14, 412197, 0, 0, 90433, 0),
-(9506000, 15, 410504, 0, 0, 90433, 0);
+(9506000, 1, 401179, 0, 0, 90431, 0),
+(9506000, 2, 411180, 0, 0, 90432, 0),
+(9506000, 3, 411211, 0, 0, 90432, 0),
+(9506000, 4, 411212, 0, 0, 90432, 0),
+(9506000, 5, 411213, 0, 0, 90432, 0),
+(9506000, 6, 412413, 0, 0, 90432, 0),
+(9506000, 7, 412537, 0, 0, 90432, 0),
+(9506000, 8, 411200, 0, 0, 90432, 0),
+(9506000, 9, 412412, 0, 0, 90432, 0),
+(9506000, 10, 411184, 0, 0, 90432, 0),
+(9506000, 11, 412197, 0, 0, 90433, 0),
+(9506000, 12, 410504, 0, 0, 90433, 0);
 
 DELETE FROM `conditions` WHERE `SourceTypeOrReferenceId` = 23 AND `SourceGroup` = 9506000;
 INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry`, `SourceId`, `ElseGroup`, `ConditionTypeOrReference`, `ConditionTarget`, `ConditionValue1`, `ConditionValue2`, `ConditionValue3`, `NegativeCondition`, `ErrorType`, `ErrorTextId`, `ScriptName`, `Comment`) VALUES
 (23, 9506000, 400537, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Bone-White Primal Raptor, after Ju''zaro''s quest'),
 (23, 9506000, 400537, 0, 0, 25, 0, 400537, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Bone-White Primal Raptor, not known yet'),
-(23, 9506000, 400538, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Red Primal Raptor, after Ju''zaro''s quest'),
-(23, 9506000, 400538, 0, 0, 25, 0, 400538, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Red Primal Raptor, not known yet'),
-(23, 9506000, 400539, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Black Primal Raptor, after Ju''zaro''s quest'),
-(23, 9506000, 400539, 0, 0, 25, 0, 400539, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Black Primal Raptor, not known yet'),
-(23, 9506000, 400540, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Green Primal Raptor, after Ju''zaro''s quest'),
-(23, 9506000, 400540, 0, 0, 25, 0, 400540, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Green Primal Raptor, not known yet'),
 (23, 9506000, 401179, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Palehide Direhorn, after Ju''zaro''s quest'),
 (23, 9506000, 401179, 0, 0, 25, 0, 401179, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Palehide Direhorn, not known yet'),
 (23, 9506000, 411180, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Kneebiter, after Ju''zaro''s quest'),
