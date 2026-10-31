@@ -753,3 +753,16 @@ INSERT INTO `gameobject` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `positi
 (9506008, 9506005, 1, 1, 1, -6540.43, -1127.62, -266.15, 4.82, 0, 0, 0.667328, -0.744764, 300, 100, 1, 'mod-primal-bones: war drum, Ju''zaro''s camp'),
 (9506009, 9506006, 1, 1, 1, -6533.86, -1126.85, -266.48, 0.64, 0, 0, 0.313982, 0.949429, 300, 100, 1, 'mod-primal-bones: supply sacks, Ju''zaro''s camp'),
 (9506010, 9506007, 1, 1, 1, -6534.38, -1137.44, -264.81, 4.52, 0, 0, 0.771131, -0.636676, 300, 100, 1, 'mod-primal-bones: bat totem, Ju''zaro''s camp');
+
+-- What the Journal's Mounts tab can't read from the loot tables: a hatched egg is always a raptor
+-- the owner doesn't know yet (the item script steers the roll), and where eggs and bones come
+-- from. mod-forever-journal shows these first among each mount's sources; harmless without it.
+CREATE TABLE IF NOT EXISTS `mod_forever_journal_collection_note` (`Kind` CHAR(1) NOT NULL, `ID` INT UNSIGNED NOT NULL, `Sort` TINYINT UNSIGNED NOT NULL DEFAULT 0, `Note` VARCHAR(200) NOT NULL, PRIMARY KEY (`Kind`,`ID`,`Sort`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+DELETE FROM `mod_forever_journal_collection_note` WHERE `Kind` = 'M' AND `ID` IN (400418, 400537, 400538, 400539, 400540, 401180) AND `Sort` = 50;
+INSERT INTO `mod_forever_journal_collection_note` (`Kind`, `ID`, `Sort`, `Note`) VALUES
+('M', 400538, 50, 'Hatches from a Primal Egg, always a raptor you don''t have yet. Eggs drop in Un''Goro Crater once you take Ju''zaro''s quest at the Lakkari Tar Pits, and hatch after three days.'),
+('M', 400539, 50, 'Hatches from a Primal Egg, always a raptor you don''t have yet. Eggs drop in Un''Goro Crater once you take Ju''zaro''s quest at the Lakkari Tar Pits, and hatch after three days.'),
+('M', 400540, 50, 'Hatches from a Primal Egg, always a raptor you don''t have yet. Eggs drop in Un''Goro Crater once you take Ju''zaro''s quest at the Lakkari Tar Pits, and hatch after three days.'),
+('M', 400418, 50, 'Hatches from a Primal Egg, always a raptor you don''t have yet. Eggs drop in Un''Goro Crater once you take Ju''zaro''s quest at the Lakkari Tar Pits, and hatch after three days.'),
+('M', 401180, 50, 'Hatches from a Primal Egg, always a raptor you don''t have yet. Eggs drop in Un''Goro Crater once you take Ju''zaro''s quest at the Lakkari Tar Pits, and hatch after three days.'),
+('M', 400537, 50, 'Ju''zaro sells it for 9,999 Primal Bones. Bones drop from Un''Goro Crater''s beasts once you take his quest at the Lakkari Tar Pits.');
