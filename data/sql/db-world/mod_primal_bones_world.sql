@@ -7,7 +7,8 @@
 --   item 23357       Primal Egg (repurposed "NPC Equip 23357", egg icon). Hatches after three days,
 --                    offline time included: the module's item script swaps it for
 --   item 20798       Hatched Primal Egg (repurposed "NPC Equip 20798", egg icon), which opens:
---                    a Red, Black or Green Primal Raptor you don't have yet, or 25 boss coins.
+--                    a Red, Black or Green Primal Raptor, Savage Raptor or Swift Albino Raptor
+--                    you don't have yet, or 25 boss coins.
 --   creature 9506000 Ju'zaro, Zandalar Bonewright, camped on the rim of the Lakkari Tar Pits.
 --   quest 9506000    The Bonewright's Price: 100 bones, and Ju'zaro's shop opens. He sells the
 --                    Bone-White Primal Raptor (9,999 bones) and pets (500 and 250), for Primal
@@ -15,7 +16,7 @@
 --                    prices: ItemExtendedCost 90430, 90432 and 90433, which the client needs too:
 --                    tools/build_patch.py).
 --   creatures        Tarborn Tyrant, rare elite primal devilsaur, one entry per striped skin;
---   9506001, 9506005 green and pale drop a raptor mount, the direhorns are the Warbringers'; three
+--   9506001, 9506005 no mount (the direhorns are the Warbringers', the raptors hatch); three
 --                    spawn spots, one Tyrant at a time.
 --   ..9506008
 --   creatures        Zandalari Warbringer, rare elite, one entry per direhorn it rides and drops,
@@ -27,7 +28,7 @@
 -- for nobody else.
 --
 -- Needs the item and creature rows of wow-mod-retail-collection (the rewards, 400000+ and 410000+),
--- wow-mod-boss-coins' coin (item 90410, what an egg gives once all three raptors are known)
+-- wow-mod-boss-coins' coin (item 90410, what an egg gives once all five raptors are known)
 -- and the looks of wow-mod-retail-library (the direhorns the Warbringers ride and the Tyrant's
 -- striped devilsaur, displays 247249/247271/247272/247273/276972).
 --
@@ -61,18 +62,21 @@ UPDATE `item_template` SET `class` = 15, `subclass` = 0, `name` = 'Hatched Prima
   `description` = 'The shell is split and something is chewing its way out.'
 WHERE `entry` = 20798;
 
--- What hatches: one of the three primal raptor mounts, a third each, and no other mount or pet.
--- The module's loot script (src/PrimalBones.cpp) only lets an egg hatch a colour its owner
--- doesn't know yet, sharing the odds among the rest. An owner who knows all three gets 25 boss
+-- What hatches: one of five raptor mounts, a fifth each (the three primal raptors, the Savage
+-- Raptor and the Swift Albino Raptor), and no other mount or pet. The module's loot script
+-- (src/PrimalBones.cpp) only lets an egg hatch a raptor its owner doesn't know yet, sharing the
+-- odds among the rest. An owner who knows all five gets 25 boss
 -- coins instead (mod-boss-coins' Tarnished Undermine Real 90410; an equal-chance entry, so it
 -- only drops when no raptor does; the raptors stay under 100% together, or the core logs that
 -- it never can).
 DELETE FROM `item_loot_template` WHERE `Entry` = 20798;
 INSERT INTO `item_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `QuestRequired`, `LootMode`, `GroupId`, `MinCount`, `MaxCount`, `Comment`) VALUES
-(20798, 400538, 0, 33.3, 0, 1, 1, 1, 1, 'mod-primal-bones: Red Primal Raptor'),
-(20798, 400539, 0, 33.3, 0, 1, 1, 1, 1, 'mod-primal-bones: Black Primal Raptor'),
-(20798, 400540, 0, 33.3, 0, 1, 1, 1, 1, 'mod-primal-bones: Green Primal Raptor'),
-(20798, 90410, 0, 0, 0, 1, 1, 25, 25, 'mod-primal-bones: Tarnished Undermine Real, once all three raptors are known');
+(20798, 400538, 0, 19.9, 0, 1, 1, 1, 1, 'mod-primal-bones: Red Primal Raptor'),
+(20798, 400539, 0, 19.9, 0, 1, 1, 1, 1, 'mod-primal-bones: Black Primal Raptor'),
+(20798, 400540, 0, 19.9, 0, 1, 1, 1, 1, 'mod-primal-bones: Green Primal Raptor'),
+(20798, 400418, 0, 19.9, 0, 1, 1, 1, 1, 'mod-primal-bones: Savage Raptor'),
+(20798, 401180, 0, 19.9, 0, 1, 1, 1, 1, 'mod-primal-bones: Swift Albino Raptor'),
+(20798, 90410, 0, 0, 0, 1, 1, 25, 25, 'mod-primal-bones: Tarnished Undermine Real, once all five raptors are known');
 
 -- ---------------------------------------------------------------------------------------------
 -- Ju'zaro
@@ -237,12 +241,12 @@ INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry
 
 -- Tarborn Tyrants: primal devilsaurs that crawled out of the tar, built like King Mosh (rank 2,
 -- rare elite; same health, damage and abilities). One entry for each of retail's five striped
--- primal devilsaur skins. Direhorns only drop from the Warbringers, so dark, blue and brown drop
--- no mount:
+-- primal devilsaur skins. None drops a mount: the direhorns are the Warbringers' and the raptors
+-- hatch from Primal Eggs:
 --   9506001  dark  (display 247249)
 --   9506005  blue  (display 247271)
---   9506006  green (display 247272): Savage Raptor
---   9506007  pale  (display 247273): Swift Albino Raptor
+--   9506006  green (display 247272)
+--   9506007  pale  (display 247273)
 --   9506008  brown (display 276972)
 -- Skinning gives what King Mosh's corpse gives.
 DELETE FROM `creature_template` WHERE `entry` IN (9506001, 9506005, 9506006, 9506007, 9506008);
@@ -500,8 +504,6 @@ INSERT INTO `creature_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `Q
 (9506012, 9506000, 9506000, 2.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Zandalari) - Primal Egg'),
 (9506013, 1963, 0, 100, 0, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Golden) - Primal Bone'),
 (9506013, 9506000, 9506000, 2.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Golden) - Primal Egg'),
-(9506006, 400418, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (green) - Savage Raptor'),
-(9506007, 401180, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (pale) - Swift Albino Raptor'),
 (9506002, 400535, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Slate Primordial Direhorn'),
 (9506003, 400534, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Amber Primordial Direhorn'),
 (9506004, 400536, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Jade Primordial Direhorn'),
