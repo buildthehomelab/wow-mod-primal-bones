@@ -19,13 +19,13 @@ Raptor**.
   | Bones | Wares |
   | ----: | --- |
   | 9,999 | Bone-White Primal Raptor |
-  | 3,333 | Palehide Direhorn |
   | 500 | Zandalari Kneebiter, Anklerender, Footslasher, Toenibbler, Shinchomper, Baby Zandalari Raptor; Pygmy, Tiny or Stunted Direhorn |
   | 250 | Direhorn Hatchling, Diemetradon Hatchling |
 
   Everything is paid from the same pile, so a pet now means the white raptor later. A mount or
   pet you already know drops off the list. The Red, Black and Green Primal Raptors aren't for
-  sale: they only hatch from Primal Eggs.
+  sale: they only hatch from Primal Eggs. Nor are the direhorns: all eight colours drop from the
+  crater's rares.
 - **Primal Bones** drop from Un'Goro's beasts **only for players on his quest or who have done
   it**. Raptors, diemetradons and pterrordaxes drop 3-6, the tar elementals 2-4, stegodons and
   devilsaurs 15-25, and the crater's rares far more. That's roughly twelve hours of hunting for the
@@ -45,7 +45,7 @@ Raptor**.
   Raptor, pale the Swift Albino Raptor, brown the Golden Primal Direhorn. All ground mounts, like
   the beasts that drop them. They fight like King Mosh and also drop 200-250 bones, and sometimes an egg.
 - **Zandalari Warbringers**: rare elite Zandalari riding a Slate, Amber or Jade Primordial
-  Direhorn or a Crimson Primal Direhorn. One is out at a time, on one of five spots across the
+  Direhorn, a Crimson Primal Direhorn or a Palehide Direhorn. One is out at a time, on one of five spots across the
   crater; an hour after a kill another one rides in, in any colour at any spot. Each drops 60-100 bones, now and then an egg, and
   sometimes (10%) the direhorn it rides.
 - Both rares announce themselves to the whole crater when they appear.
@@ -64,7 +64,7 @@ Raptor**.
 - **The shop's prices in your client patch.** A price in items is an ItemExtendedCost row, and the
   client needs it too: without it the vendor window shows no price and won't buy.
   `tools/build_patch.py` copies the patch that carries your realm's `ItemExtendedCost.dbc` and adds
-  the module's four rows (90430-90433) at the end, leaving every other row and file as it was:
+  the module's three rows (90430, 90432 and 90433) at the end, leaving every other row and file as it was:
 
   ```bash
   python3 tools/build_patch.py --patch <your spell and item patch>.MPQ --out <new patch>.MPQ

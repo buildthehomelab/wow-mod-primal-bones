@@ -21,7 +21,7 @@ DELETE FROM `npc_vendor` WHERE `entry` = 9506000;
 DELETE FROM `itemextendedcost_dbc` WHERE `ID` BETWEEN 90430 AND 90439;
 DELETE FROM `gossip_menu_option` WHERE `MenuID` = 9506000;
 DELETE FROM `reference_loot_template` WHERE `Entry` = 9506000;
-DELETE FROM `creature_loot_template` WHERE `Item` IN (1963, 9506000) OR `Entry` BETWEEN 9506001 AND 9506009;
+DELETE FROM `creature_loot_template` WHERE `Item` IN (1963, 9506000) OR `Entry` BETWEEN 9506001 AND 9506010;
 DELETE FROM `item_loot_template` WHERE `Entry` = 20798;
 
 DELETE FROM `creature_queststarter` WHERE `quest` BETWEEN 9506000 AND 9506015;
@@ -32,12 +32,12 @@ DELETE FROM `quest_template` WHERE `ID` BETWEEN 9506000 AND 9506015;
 
 DELETE FROM `gossip_menu` WHERE `MenuID` = 9506000;
 DELETE FROM `npc_text` WHERE `ID` BETWEEN 9506000 AND 9506006;
-DELETE FROM `smart_scripts` WHERE `source_type` = 0 AND `entryorguid` BETWEEN 9506000 AND 9506009;
-DELETE FROM `creature_text` WHERE `CreatureID` BETWEEN 9506000 AND 9506009;
-DELETE FROM `creature_template_addon` WHERE `entry` BETWEEN 9506000 AND 9506009;
-DELETE FROM `creature_equip_template` WHERE `CreatureID` BETWEEN 9506000 AND 9506009;
-DELETE FROM `creature_template_model` WHERE `CreatureID` BETWEEN 9506000 AND 9506009;
-DELETE FROM `creature_template` WHERE `entry` BETWEEN 9506000 AND 9506009;
+DELETE FROM `smart_scripts` WHERE `source_type` = 0 AND `entryorguid` BETWEEN 9506000 AND 9506010;
+DELETE FROM `creature_text` WHERE `CreatureID` BETWEEN 9506000 AND 9506010;
+DELETE FROM `creature_template_addon` WHERE `entry` BETWEEN 9506000 AND 9506010;
+DELETE FROM `creature_equip_template` WHERE `CreatureID` BETWEEN 9506000 AND 9506010;
+DELETE FROM `creature_template_model` WHERE `CreatureID` BETWEEN 9506000 AND 9506010;
+DELETE FROM `creature_template` WHERE `entry` BETWEEN 9506000 AND 9506010;
 
 -- Stock AzerothCore values of the repurposed items.
 UPDATE `item_template` SET `class` = 7, `subclass` = 11, `name` = 'Deprecated Bone Chips', `Quality` = 1, `Flags` = 16,

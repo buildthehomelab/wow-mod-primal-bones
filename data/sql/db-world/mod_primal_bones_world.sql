@@ -10,15 +10,16 @@
 --                    a Red, Black or Green Primal Raptor you don't have yet, or 25 boss coins.
 --   creature 9506000 Ju'zaro, Zandalar Bonewright, camped on the rim of the Lakkari Tar Pits.
 --   quest 9506000    The Bonewright's Price: 100 bones, and Ju'zaro's shop opens. He sells the
---                    Bone-White Primal Raptor (9,999 bones), a direhorn (3,333) and pets (500
---                    and 250), for Primal Bones only (the other primal raptors only hatch; prices:
---                    ItemExtendedCost 90430-90433, which the client needs too: tools/build_patch.py).
+--                    Bone-White Primal Raptor (9,999 bones) and pets (500 and 250), for Primal
+--                    Bones only (the other primal raptors only hatch, the direhorns only drop;
+--                    prices: ItemExtendedCost 90430, 90432 and 90433, which the client needs too:
+--                    tools/build_patch.py).
 --   creatures        Tarborn Tyrant, rare elite primal devilsaur, one entry per striped skin, each
 --   9506001, 9506005 with its own mount; three spawn spots, one Tyrant at a time.
 --   ..9506008
 --   creatures        Zandalari Warbringer, rare elite, one entry per direhorn it rides and drops:
---   9506002-9506004, Slate, Amber or Jade Primordial Direhorn, or the Crimson Primal Direhorn;
---   9506009          five spawn spots, one Warbringer at a time.
+--   9506002-9506004, Slate, Amber or Jade Primordial Direhorn, the Crimson Primal Direhorn or the
+--   9506009, 9506010 Palehide Direhorn; five spawn spots, one Warbringer at a time.
 --
 -- Bones and eggs drop for a player who is on Ju'zaro's quest or has done it (loot conditions), and
 -- for nobody else.
@@ -175,11 +176,11 @@ INSERT INTO `creature_questender` (`id`, `quest`) VALUES
 
 -- The prices, in Primal Bones. The client needs the same ItemExtendedCost rows, or the vendor
 -- window shows no price and won't buy: tools/build_patch.py adds them to your realm's spell and
--- item patch. 90430-90439 are this module's.
+-- item patch. 90430-90439 are this module's; 90431 was the Palehide Direhorn's 3,333 bones, which
+-- now drops from a Warbringer instead.
 DELETE FROM `itemextendedcost_dbc` WHERE `ID` BETWEEN 90430 AND 90439;
 INSERT INTO `itemextendedcost_dbc` (`ID`, `HonorPoints`, `ArenaPoints`, `ArenaBracket`, `ItemID_1`, `ItemID_2`, `ItemID_3`, `ItemID_4`, `ItemID_5`, `ItemCount_1`, `ItemCount_2`, `ItemCount_3`, `ItemCount_4`, `ItemCount_5`, `RequiredArenaRating`, `ItemPurchaseGroup`) VALUES
 (90430, 0, 0, 0, 1963, 0, 0, 0, 0, 9999, 0, 0, 0, 0, 0, 0),
-(90431, 0, 0, 0, 1963, 0, 0, 0, 0, 3333, 0, 0, 0, 0, 0, 0),
 (90432, 0, 0, 0, 1963, 0, 0, 0, 0, 500, 0, 0, 0, 0, 0, 0),
 (90433, 0, 0, 0, 1963, 0, 0, 0, 0, 250, 0, 0, 0, 0, 0, 0);
 
@@ -189,25 +190,22 @@ INSERT INTO `itemextendedcost_dbc` (`ID`, `HonorPoints`, `ArenaPoints`, `ArenaBr
 DELETE FROM `npc_vendor` WHERE `entry` = 9506000;
 INSERT INTO `npc_vendor` (`entry`, `slot`, `item`, `maxcount`, `incrtime`, `ExtendedCost`, `VerifiedBuild`) VALUES
 (9506000, 0, 400537, 0, 0, 90430, 0),
-(9506000, 1, 401179, 0, 0, 90431, 0),
-(9506000, 2, 411180, 0, 0, 90432, 0),
-(9506000, 3, 411211, 0, 0, 90432, 0),
-(9506000, 4, 411212, 0, 0, 90432, 0),
-(9506000, 5, 411213, 0, 0, 90432, 0),
-(9506000, 6, 412413, 0, 0, 90432, 0),
-(9506000, 7, 412537, 0, 0, 90432, 0),
-(9506000, 8, 411200, 0, 0, 90432, 0),
-(9506000, 9, 412412, 0, 0, 90432, 0),
-(9506000, 10, 411184, 0, 0, 90432, 0),
-(9506000, 11, 412197, 0, 0, 90433, 0),
-(9506000, 12, 410504, 0, 0, 90433, 0);
+(9506000, 1, 411180, 0, 0, 90432, 0),
+(9506000, 2, 411211, 0, 0, 90432, 0),
+(9506000, 3, 411212, 0, 0, 90432, 0),
+(9506000, 4, 411213, 0, 0, 90432, 0),
+(9506000, 5, 412413, 0, 0, 90432, 0),
+(9506000, 6, 412537, 0, 0, 90432, 0),
+(9506000, 7, 411200, 0, 0, 90432, 0),
+(9506000, 8, 412412, 0, 0, 90432, 0),
+(9506000, 9, 411184, 0, 0, 90432, 0),
+(9506000, 10, 412197, 0, 0, 90433, 0),
+(9506000, 11, 410504, 0, 0, 90433, 0);
 
 DELETE FROM `conditions` WHERE `SourceTypeOrReferenceId` = 23 AND `SourceGroup` = 9506000;
 INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry`, `SourceId`, `ElseGroup`, `ConditionTypeOrReference`, `ConditionTarget`, `ConditionValue1`, `ConditionValue2`, `ConditionValue3`, `NegativeCondition`, `ErrorType`, `ErrorTextId`, `ScriptName`, `Comment`) VALUES
 (23, 9506000, 400537, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Bone-White Primal Raptor, after Ju''zaro''s quest'),
 (23, 9506000, 400537, 0, 0, 25, 0, 400537, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Bone-White Primal Raptor, not known yet'),
-(23, 9506000, 401179, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Palehide Direhorn, after Ju''zaro''s quest'),
-(23, 9506000, 401179, 0, 0, 25, 0, 401179, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Palehide Direhorn, not known yet'),
 (23, 9506000, 411180, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Kneebiter, after Ju''zaro''s quest'),
 (23, 9506000, 411180, 0, 0, 25, 0, 411180, 0, 0, 1, 0, 0, '', 'mod-primal-bones: Zandalari Kneebiter, not known yet'),
 (23, 9506000, 411211, 0, 0, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Anklerender, after Ju''zaro''s quest'),
@@ -263,39 +261,44 @@ INSERT INTO `creature_template_model` (`CreatureID`, `Idx`, `CreatureDisplayID`,
 -- Zandalari Warbringers: the Zandalar Enforcer's model and gear, mounted on a Primordial
 -- Direhorn from the retail library (creature_template_addon.mount). One entry per colour, so
 -- each drops its own direhorn: 9506002 Slate (247715), 9506003 Amber (247718), 9506004 Jade
--- (247717) Primordial Direhorns, 9506009 the Crimson Primal Direhorn (248101).
+-- (247717) Primordial Direhorns, 9506009 the Crimson Primal Direhorn (248101), 9506010 the
+-- Palehide Direhorn (287779).
 -- visibilityDistanceType 3: seen from further away, like other large rares.
-DELETE FROM `creature_template` WHERE `entry` IN (9506002, 9506003, 9506004, 9506009);
+DELETE FROM `creature_template` WHERE `entry` IN (9506002, 9506003, 9506004, 9506009, 9506010);
 INSERT INTO `creature_template` (`entry`, `name`, `subname`, `minlevel`, `maxlevel`, `faction`, `speed_walk`, `speed_run`, `rank`, `DamageModifier`, `BaseAttackTime`, `RangeAttackTime`, `unit_class`, `unit_flags`, `unit_flags2`, `type`, `lootid`, `mingold`, `maxgold`, `AIName`, `HealthModifier`, `RegenHealth`) VALUES
 (9506002, 'Zandalari Warbringer', NULL, 60, 60, 14, 1.6, 1.71429, 2, 6, 2000, 2000, 1, 0, 2048, 7, 9506002, 2000, 4000, 'SmartAI', 10, 1),
 (9506003, 'Zandalari Warbringer', NULL, 60, 60, 14, 1.6, 1.71429, 2, 6, 2000, 2000, 1, 0, 2048, 7, 9506003, 2000, 4000, 'SmartAI', 10, 1),
 (9506004, 'Zandalari Warbringer', NULL, 60, 60, 14, 1.6, 1.71429, 2, 6, 2000, 2000, 1, 0, 2048, 7, 9506004, 2000, 4000, 'SmartAI', 10, 1),
-(9506009, 'Zandalari Warbringer', NULL, 60, 60, 14, 1.6, 1.71429, 2, 6, 2000, 2000, 1, 0, 2048, 7, 9506009, 2000, 4000, 'SmartAI', 10, 1);
+(9506009, 'Zandalari Warbringer', NULL, 60, 60, 14, 1.6, 1.71429, 2, 6, 2000, 2000, 1, 0, 2048, 7, 9506009, 2000, 4000, 'SmartAI', 10, 1),
+(9506010, 'Zandalari Warbringer', NULL, 60, 60, 14, 1.6, 1.71429, 2, 6, 2000, 2000, 1, 0, 2048, 7, 9506010, 2000, 4000, 'SmartAI', 10, 1);
 
-DELETE FROM `creature_template_model` WHERE `CreatureID` IN (9506002, 9506003, 9506004, 9506009);
+DELETE FROM `creature_template_model` WHERE `CreatureID` IN (9506002, 9506003, 9506004, 9506009, 9506010);
 INSERT INTO `creature_template_model` (`CreatureID`, `Idx`, `CreatureDisplayID`, `DisplayScale`, `Probability`, `VerifiedBuild`) VALUES
 (9506002, 0, 15004, 1, 1, 0),
 (9506003, 0, 15004, 1, 1, 0),
 (9506004, 0, 15004, 1, 1, 0),
-(9506009, 0, 15004, 1, 1, 0);
+(9506009, 0, 15004, 1, 1, 0),
+(9506010, 0, 15004, 1, 1, 0);
 
-DELETE FROM `creature_equip_template` WHERE `CreatureID` IN (9506002, 9506003, 9506004, 9506009);
+DELETE FROM `creature_equip_template` WHERE `CreatureID` IN (9506002, 9506003, 9506004, 9506009, 9506010);
 INSERT INTO `creature_equip_template` (`CreatureID`, `ID`, `ItemID1`, `ItemID2`, `ItemID3`, `VerifiedBuild`) VALUES
 (9506002, 1, 18002, 0, 18019, 0),
 (9506003, 1, 18002, 0, 18019, 0),
 (9506004, 1, 18002, 0, 18019, 0),
-(9506009, 1, 18002, 0, 18019, 0);
+(9506009, 1, 18002, 0, 18019, 0),
+(9506010, 1, 18002, 0, 18019, 0);
 
-DELETE FROM `creature_template_addon` WHERE `entry` IN (9506002, 9506003, 9506004, 9506009);
+DELETE FROM `creature_template_addon` WHERE `entry` IN (9506002, 9506003, 9506004, 9506009, 9506010);
 INSERT INTO `creature_template_addon` (`entry`, `path_id`, `mount`, `bytes1`, `bytes2`, `emote`, `visibilityDistanceType`, `auras`) VALUES
 (9506002, 0, 247715, 0, 1, 0, 3, NULL),
 (9506003, 0, 247718, 0, 1, 0, 3, NULL),
 (9506004, 0, 247717, 0, 1, 0, 3, NULL),
-(9506009, 0, 248101, 0, 1, 0, 3, NULL);
+(9506009, 0, 248101, 0, 1, 0, 3, NULL),
+(9506010, 0, 287779, 0, 1, 0, 3, NULL);
 
 -- Both announce themselves to the whole crater when they appear (TextRange 2: zone), so players
 -- know one is up somewhere. Type 16: monster emote.
-DELETE FROM `creature_text` WHERE `CreatureID` BETWEEN 9506001 AND 9506009;
+DELETE FROM `creature_text` WHERE `CreatureID` BETWEEN 9506001 AND 9506010;
 INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `BroadcastTextId`, `TextRange`, `comment`) VALUES
 (9506001, 0, 0, 'The Lakkari tar heaves, and something enormous claws its way out of the pit!', 16, 0, 100, 0, 0, 0, 0, 2, 'mod-primal-bones: Tarborn Tyrant spawn'),
 (9506001, 1, 0, '%s roars, and the whole crater goes quiet.', 16, 0, 100, 0, 0, 0, 0, 0, 'mod-primal-bones: Tarborn Tyrant aggro'),
@@ -314,11 +317,13 @@ INSERT INTO `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Lan
 (9506004, 0, 0, 'War drums echo across the crater. A Zandalari Warbringer rides through Un''Goro!', 16, 0, 100, 0, 0, 0, 0, 2, 'mod-primal-bones: Warbringer spawn'),
 (9506004, 1, 0, 'Da Zandalar take what dey want!', 12, 0, 100, 0, 0, 0, 0, 0, 'mod-primal-bones: Warbringer aggro'),
 (9506009, 0, 0, 'War drums echo across the crater. A Zandalari Warbringer rides through Un''Goro!', 16, 0, 100, 0, 0, 0, 0, 2, 'mod-primal-bones: Warbringer spawn'),
-(9506009, 1, 0, 'Da Zandalar take what dey want!', 12, 0, 100, 0, 0, 0, 0, 0, 'mod-primal-bones: Warbringer aggro');
+(9506009, 1, 0, 'Da Zandalar take what dey want!', 12, 0, 100, 0, 0, 0, 0, 0, 'mod-primal-bones: Warbringer aggro'),
+(9506010, 0, 0, 'War drums echo across the crater. A Zandalari Warbringer rides through Un''Goro!', 16, 0, 100, 0, 0, 0, 0, 2, 'mod-primal-bones: Warbringer spawn'),
+(9506010, 1, 0, 'Da Zandalar take what dey want!', 12, 0, 100, 0, 0, 0, 0, 0, 'mod-primal-bones: Warbringer aggro');
 
 -- Tyrant: King Mosh's three attacks, plus the two lines above. Warbringers: Cleave, Mortal
 -- Strike and a direhorn Thunderclap.
-DELETE FROM `smart_scripts` WHERE `source_type` = 0 AND `entryorguid` BETWEEN 9506001 AND 9506009;
+DELETE FROM `smart_scripts` WHERE `source_type` = 0 AND `entryorguid` BETWEEN 9506001 AND 9506010;
 INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `event_param5`, `event_param6`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_param4`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
 (9506001, 0, 0, 0, 11, 0, 100, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - On Respawn - Say Line 0'),
 (9506001, 0, 1, 0, 4, 0, 100, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Tarborn Tyrant - On Aggro - Say Line 1'),
@@ -364,7 +369,12 @@ INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_
 (9506009, 0, 1, 0, 4, 0, 100, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Zandalari Warbringer - On Aggro - Say Line 1'),
 (9506009, 0, 2, 0, 0, 0, 100, 0, 5000, 7000, 6000, 9000, 0, 0, 11, 15284, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 'Zandalari Warbringer - In Combat - Cast Cleave'),
 (9506009, 0, 3, 0, 0, 0, 100, 0, 9000, 12000, 10000, 14000, 0, 0, 11, 13737, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 'Zandalari Warbringer - In Combat - Cast Mortal Strike'),
-(9506009, 0, 4, 0, 0, 0, 100, 0, 12000, 15000, 15000, 20000, 0, 0, 11, 15548, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Zandalari Warbringer - In Combat - Cast Thunderclap');
+(9506009, 0, 4, 0, 0, 0, 100, 0, 12000, 15000, 15000, 20000, 0, 0, 11, 15548, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Zandalari Warbringer - In Combat - Cast Thunderclap'),
+(9506010, 0, 0, 0, 11, 0, 100, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Zandalari Warbringer - On Respawn - Say Line 0'),
+(9506010, 0, 1, 0, 4, 0, 100, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Zandalari Warbringer - On Aggro - Say Line 1'),
+(9506010, 0, 2, 0, 0, 0, 100, 0, 5000, 7000, 6000, 9000, 0, 0, 11, 15284, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 'Zandalari Warbringer - In Combat - Cast Cleave'),
+(9506010, 0, 3, 0, 0, 0, 100, 0, 9000, 12000, 10000, 14000, 0, 0, 11, 13737, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 'Zandalari Warbringer - In Combat - Cast Mortal Strike'),
+(9506010, 0, 4, 0, 0, 0, 100, 0, 12000, 15000, 15000, 20000, 0, 0, 11, 15548, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Zandalari Warbringer - In Combat - Cast Thunderclap');
 
 -- ---------------------------------------------------------------------------------------------
 -- Loot
@@ -380,7 +390,7 @@ INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_
 -- King Mosh 6%, Warbringer 2.4%, Tyrant 6.75%). Rows with these conditions are each player's
 -- own, like quest loot.
 DELETE FROM `creature_loot_template` WHERE `Item` IN (1963, 9506000) AND `Entry` IN (6505, 6506, 6507, 6508, 9162, 9163, 9164, 9165, 9166, 9167, 6517, 6518, 6519, 6527, 6501, 6502, 6503, 6504, 6498, 6581, 6583, 6584);
-DELETE FROM `creature_loot_template` WHERE `Entry` BETWEEN 9506001 AND 9506009;
+DELETE FROM `creature_loot_template` WHERE `Entry` BETWEEN 9506001 AND 9506010;
 INSERT INTO `creature_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `QuestRequired`, `LootMode`, `GroupId`, `MinCount`, `MaxCount`, `Comment`) VALUES
 (6505, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Ravasaur - Primal Bone'),
 (6505, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur - Primal Egg'),
@@ -444,6 +454,8 @@ INSERT INTO `creature_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `Q
 (9506004, 9506000, 9506000, 2.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Jade) - Primal Egg'),
 (9506009, 1963, 0, 100, 0, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Crimson) - Primal Bone'),
 (9506009, 9506000, 9506000, 2.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Crimson) - Primal Egg'),
+(9506010, 1963, 0, 100, 0, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Palehide) - Primal Bone'),
+(9506010, 9506000, 9506000, 2.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Palehide) - Primal Egg'),
 (9506001, 400533, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (dark) - Cobalt Primordial Direhorn'),
 (9506005, 401038, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (blue) - Zandalari Direhorn'),
 (9506006, 400418, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (green) - Savage Raptor'),
@@ -452,9 +464,10 @@ INSERT INTO `creature_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `Q
 (9506002, 400535, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Slate Primordial Direhorn'),
 (9506003, 400534, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Amber Primordial Direhorn'),
 (9506004, 400536, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Jade Primordial Direhorn'),
-(9506009, 400546, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Crimson Primal Direhorn');
+(9506009, 400546, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Crimson Primal Direhorn'),
+(9506010, 401179, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Palehide Direhorn');
 
-DELETE FROM `conditions` WHERE `SourceTypeOrReferenceId` = 1 AND `SourceEntry` = 1963 AND `SourceGroup` IN (6505, 6506, 6507, 6508, 9162, 9163, 9164, 9165, 9166, 9167, 6517, 6518, 6519, 6527, 6501, 6502, 6503, 6504, 6498, 6581, 6583, 6584, 9506001, 9506005, 9506006, 9506007, 9506008, 9506002, 9506003, 9506004, 9506009);
+DELETE FROM `conditions` WHERE `SourceTypeOrReferenceId` = 1 AND `SourceEntry` = 1963 AND `SourceGroup` IN (6505, 6506, 6507, 6508, 9162, 9163, 9164, 9165, 9166, 9167, 6517, 6518, 6519, 6527, 6501, 6502, 6503, 6504, 6498, 6581, 6583, 6584, 9506001, 9506005, 9506006, 9506007, 9506008, 9506002, 9506003, 9506004, 9506009, 9506010);
 INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry`, `SourceId`, `ElseGroup`, `ConditionTypeOrReference`, `ConditionTarget`, `ConditionValue1`, `ConditionValue2`, `ConditionValue3`, `NegativeCondition`, `ErrorType`, `ErrorTextId`, `ScriptName`, `Comment`) VALUES
 (1, 6505, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Ravasaur - bones while on Ju''zaro''s quest'),
 (1, 6505, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Ravasaur - bones once his shop is open'),
@@ -517,7 +530,9 @@ INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry
 (1, 9506004, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Warbringer (Jade) - bones while on Ju''zaro''s quest'),
 (1, 9506004, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Warbringer (Jade) - bones once his shop is open'),
 (1, 9506009, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Warbringer (Crimson) - bones while on Ju''zaro''s quest'),
-(1, 9506009, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Warbringer (Crimson) - bones once his shop is open');
+(1, 9506009, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Warbringer (Crimson) - bones once his shop is open'),
+(1, 9506010, 1963, 0, 0, 9, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Warbringer (Palehide) - bones while on Ju''zaro''s quest'),
+(1, 9506010, 1963, 0, 1, 8, 0, 9506000, 0, 0, 0, 0, 0, '', 'mod-primal-bones: Zandalari Warbringer (Palehide) - bones once his shop is open');
 
 DELETE FROM `reference_loot_template` WHERE `Entry` = 9506000;
 INSERT INTO `reference_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `QuestRequired`, `LootMode`, `GroupId`, `MinCount`, `MaxCount`, `Comment`) VALUES
@@ -575,7 +590,12 @@ INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `equipmen
 (9506036, 9506002, 1, 1, 1, 1, -6782.50, -2216.20, -271.93, 3.10, 3600, 15, 1, 'mod-primal-bones: Warbringer (Slate), eastern marshes'),
 (9506037, 9506003, 1, 1, 1, 1, -6782.50, -2216.20, -271.93, 3.10, 3600, 15, 1, 'mod-primal-bones: Warbringer (Amber), eastern marshes'),
 (9506038, 9506004, 1, 1, 1, 1, -6782.50, -2216.20, -271.93, 3.10, 3600, 15, 1, 'mod-primal-bones: Warbringer (Jade), eastern marshes'),
-(9506039, 9506009, 1, 1, 1, 1, -6782.50, -2216.20, -271.93, 3.10, 3600, 15, 1, 'mod-primal-bones: Warbringer (Crimson), eastern marshes');
+(9506039, 9506009, 1, 1, 1, 1, -6782.50, -2216.20, -271.93, 3.10, 3600, 15, 1, 'mod-primal-bones: Warbringer (Crimson), eastern marshes'),
+(9506055, 9506010, 1, 1, 1, 1, -6864.70, -619.10, -271.31, 5.50, 3600, 15, 1, 'mod-primal-bones: Warbringer (Palehide), north-western jungle'),
+(9506056, 9506010, 1, 1, 1, 1, -6513.50, -749.10, -270.11, 4.70, 3600, 15, 1, 'mod-primal-bones: Warbringer (Palehide), northern jungle'),
+(9506057, 9506010, 1, 1, 1, 1, -7685.70, -908.80, -269.62, 1.00, 3600, 15, 1, 'mod-primal-bones: Warbringer (Palehide), south-western stegodon fields'),
+(9506058, 9506010, 1, 1, 1, 1, -7823.70, -1615.00, -268.24, 1.60, 3600, 15, 1, 'mod-primal-bones: Warbringer (Palehide), southern plains'),
+(9506059, 9506010, 1, 1, 1, 1, -6782.50, -2216.20, -271.93, 3.10, 3600, 15, 1, 'mod-primal-bones: Warbringer (Palehide), eastern marshes');
 
 -- One Tyrant at a time (three hours after a kill, any skin at any of its spots), and one
 -- Warbringer at a time (an hour after a kill, any colour at any of its spots). Chance 0: all
@@ -618,7 +638,12 @@ INSERT INTO `pool_creature` (`guid`, `pool_entry`, `chance`, `description`) VALU
 (9506036, 9506002, 0, 'Zandalari Warbringer'),
 (9506037, 9506002, 0, 'Zandalari Warbringer'),
 (9506038, 9506002, 0, 'Zandalari Warbringer'),
-(9506039, 9506002, 0, 'Zandalari Warbringer');
+(9506039, 9506002, 0, 'Zandalari Warbringer'),
+(9506055, 9506002, 0, 'Zandalari Warbringer'),
+(9506056, 9506002, 0, 'Zandalari Warbringer'),
+(9506057, 9506002, 0, 'Zandalari Warbringer'),
+(9506058, 9506002, 0, 'Zandalari Warbringer'),
+(9506059, 9506002, 0, 'Zandalari Warbringer');
 
 -- Ju'zaro's camp: a troll bonfire (a cooking fire for players too), bone piles, and the module's
 -- own props: plain decoration (type 5) on stock client models, since the stock objects that use
