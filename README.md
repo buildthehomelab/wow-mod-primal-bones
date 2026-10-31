@@ -31,9 +31,9 @@ Raptor**.
   devilsaurs 15-25, and the crater's rares far more. That's roughly twelve hours of hunting for the
   full 9,999 alone, less in a group. Bones are soulbound and stack to 9,999.
 - **Primal Eggs** are how you get the Red, Black and Green Primal Raptors, the Savage Raptor
-  and the Swift Albino Raptor. Ju'zaro once sold the primal ones for 3,333 bones, so an egg takes about as many kills as 3,333 bones: 1 in 740 beasts,
-  1 in 1,100 tar elementals, 1 in 170 stegodons and devilsaurs (0.135%, 0.09%, 0.6%), and from the
-  rares Ravasaur Matriarch 1.95%, Gruff 3.75%, King Mosh 6%, a Warbringer 2.4%, a Tyrant 6.75%.
+  and the Swift Albino Raptor. Every kill has at least a 1 in 250 chance: 1 in 250 beasts and tar
+  elementals (0.4%), 1 in 170 stegodons and devilsaurs (0.6%), and from the rares Ravasaur
+  Matriarch 1.95%, Gruff 3.75%, King Mosh 6%, a Warbringer 2.4%, a Tyrant 6.75%.
   Again only for players on his quest or past it. An egg hatches **three days** later, offline
   time included, into a Hatched Primal Egg. Open it and it's always a primal raptor, one you don't
   have yet. Once you have all five, an egg holds 25 Tarnished Undermine Reals (boss coins)

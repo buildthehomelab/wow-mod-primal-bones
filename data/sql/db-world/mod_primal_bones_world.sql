@@ -428,40 +428,41 @@ INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_
 -- crater's beasts, 15-25 from its elites and far more from the rares: roughly twelve hours of
 -- hunting for 9,999 alone. Every egg is a primal raptor, which the shop used to sell for 3,333
 -- bones, so an egg takes about the kills 3,333 bones do: egg chance = average bones / 3,333
--- (beasts 0.135%, tar elementals 0.09%, elites 0.6%, Ravasaur Matriarch 1.95%, Gruff 3.75%,
--- King Mosh 6%, Warbringer 2.4%, Tyrant 6.75%). Rows with these conditions are each player's
+-- (elites 0.6%, Ravasaur Matriarch 1.95%, Gruff 3.75%, King Mosh 6%, Warbringer 2.4%, Tyrant
+-- 6.75%), but never under 1 in 250 kills: beasts and tar elementals 0.4% (by bones they'd be
+-- 0.135% and 0.09%, which felt like a drought). Rows with these conditions are each player's
 -- own, like quest loot.
 DELETE FROM `creature_loot_template` WHERE `Item` IN (1963, 9506000) AND `Entry` IN (6505, 6506, 6507, 6508, 9162, 9163, 9164, 9165, 9166, 9167, 6517, 6518, 6519, 6527, 6501, 6502, 6503, 6504, 6498, 6581, 6583, 6584);
 DELETE FROM `creature_loot_template` WHERE `Entry` BETWEEN 9506001 AND 9506013;
 INSERT INTO `creature_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `QuestRequired`, `LootMode`, `GroupId`, `MinCount`, `MaxCount`, `Comment`) VALUES
 (6505, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Ravasaur - Primal Bone'),
-(6505, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur - Primal Egg'),
+(6505, 9506000, 9506000, 0.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur - Primal Egg'),
 (6506, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Ravasaur Runner - Primal Bone'),
-(6506, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur Runner - Primal Egg'),
+(6506, 9506000, 9506000, 0.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur Runner - Primal Egg'),
 (6507, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Ravasaur Hunter - Primal Bone'),
-(6507, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur Hunter - Primal Egg'),
+(6507, 9506000, 9506000, 0.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Ravasaur Hunter - Primal Egg'),
 (6508, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Venomhide Ravasaur - Primal Bone'),
-(6508, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Venomhide Ravasaur - Primal Egg'),
+(6508, 9506000, 9506000, 0.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Venomhide Ravasaur - Primal Egg'),
 (9162, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Young Diemetradon - Primal Bone'),
-(9162, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Young Diemetradon - Primal Egg'),
+(9162, 9506000, 9506000, 0.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Young Diemetradon - Primal Egg'),
 (9163, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Diemetradon - Primal Bone'),
-(9163, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Diemetradon - Primal Egg'),
+(9163, 9506000, 9506000, 0.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Diemetradon - Primal Egg'),
 (9164, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Elder Diemetradon - Primal Bone'),
-(9164, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Elder Diemetradon - Primal Egg'),
+(9164, 9506000, 9506000, 0.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Elder Diemetradon - Primal Egg'),
 (9165, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Fledgling Pterrordax - Primal Bone'),
-(9165, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Fledgling Pterrordax - Primal Egg'),
+(9165, 9506000, 9506000, 0.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Fledgling Pterrordax - Primal Egg'),
 (9166, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Pterrordax - Primal Bone'),
-(9166, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Pterrordax - Primal Egg'),
+(9166, 9506000, 9506000, 0.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Pterrordax - Primal Egg'),
 (9167, 1963, 0, 100, 0, 1, 0, 3, 6, 'mod-primal-bones: Frenzied Pterrordax - Primal Bone'),
-(9167, 9506000, 9506000, 0.135, 0, 1, 0, 1, 1, 'mod-primal-bones: Frenzied Pterrordax - Primal Egg'),
+(9167, 9506000, 9506000, 0.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Frenzied Pterrordax - Primal Egg'),
 (6517, 1963, 0, 100, 0, 1, 0, 2, 4, 'mod-primal-bones: Tar Beast - Primal Bone'),
-(6517, 9506000, 9506000, 0.09, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Beast - Primal Egg'),
+(6517, 9506000, 9506000, 0.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Beast - Primal Egg'),
 (6518, 1963, 0, 100, 0, 1, 0, 2, 4, 'mod-primal-bones: Tar Lurker - Primal Bone'),
-(6518, 9506000, 9506000, 0.09, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Lurker - Primal Egg'),
+(6518, 9506000, 9506000, 0.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Lurker - Primal Egg'),
 (6519, 1963, 0, 100, 0, 1, 0, 2, 4, 'mod-primal-bones: Tar Lord - Primal Bone'),
-(6519, 9506000, 9506000, 0.09, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Lord - Primal Egg'),
+(6519, 9506000, 9506000, 0.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Lord - Primal Egg'),
 (6527, 1963, 0, 100, 0, 1, 0, 2, 4, 'mod-primal-bones: Tar Creeper - Primal Bone'),
-(6527, 9506000, 9506000, 0.09, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Creeper - Primal Egg'),
+(6527, 9506000, 9506000, 0.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Tar Creeper - Primal Egg'),
 (6501, 1963, 0, 100, 0, 1, 0, 15, 25, 'mod-primal-bones: Stegodon - Primal Bone'),
 (6501, 9506000, 9506000, 0.6, 0, 1, 0, 1, 1, 'mod-primal-bones: Stegodon - Primal Egg'),
 (6502, 1963, 0, 100, 0, 1, 0, 15, 25, 'mod-primal-bones: Plated Stegodon - Primal Bone'),
