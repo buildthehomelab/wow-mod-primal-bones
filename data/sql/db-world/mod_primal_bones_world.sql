@@ -14,8 +14,9 @@
 --                    Bones only (the other primal raptors only hatch, the direhorns only drop;
 --                    prices: ItemExtendedCost 90430, 90432 and 90433, which the client needs too:
 --                    tools/build_patch.py).
---   creatures        Tarborn Tyrant, rare elite primal devilsaur, one entry per striped skin, each
---   9506001, 9506005 with its own mount; three spawn spots, one Tyrant at a time.
+--   creatures        Tarborn Tyrant, rare elite primal devilsaur, one entry per striped skin;
+--   9506001, 9506005 green and pale drop a raptor mount, the direhorns are the Warbringers'; three
+--                    spawn spots, one Tyrant at a time.
 --   ..9506008
 --   creatures        Zandalari Warbringer, rare elite, one entry per direhorn it rides and drops,
 --   9506002-9506004, all eight colours of the direhorn mount: Slate, Amber, Jade or Cobalt
@@ -236,12 +237,13 @@ INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry
 
 -- Tarborn Tyrants: primal devilsaurs that crawled out of the tar, built like King Mosh (rank 2,
 -- rare elite; same health, damage and abilities). One entry for each of retail's five striped
--- primal devilsaur skins, so each drops its own mount:
---   9506001  dark  (display 247249): Cobalt Primordial Direhorn
---   9506005  blue  (display 247271): Zandalari Direhorn
+-- primal devilsaur skins. Direhorns only drop from the Warbringers, so dark, blue and brown drop
+-- no mount:
+--   9506001  dark  (display 247249)
+--   9506005  blue  (display 247271)
 --   9506006  green (display 247272): Savage Raptor
 --   9506007  pale  (display 247273): Swift Albino Raptor
---   9506008  brown (display 276972): Golden Primal Direhorn
+--   9506008  brown (display 276972)
 -- Skinning gives what King Mosh's corpse gives.
 DELETE FROM `creature_template` WHERE `entry` IN (9506001, 9506005, 9506006, 9506007, 9506008);
 INSERT INTO `creature_template` (`entry`, `name`, `minlevel`, `maxlevel`, `faction`, `speed_walk`, `speed_run`, `rank`, `DamageModifier`, `BaseAttackTime`, `RangeAttackTime`, `unit_class`, `unit_flags`, `unit_flags2`, `type`, `lootid`, `skinloot`, `mingold`, `maxgold`, `AIName`, `HealthModifier`, `RegenHealth`) VALUES
@@ -264,8 +266,8 @@ INSERT INTO `creature_template_model` (`CreatureID`, `Idx`, `CreatureDisplayID`,
 -- each drops its own direhorn: 9506002 Slate (247715), 9506003 Amber (247718), 9506004 Jade
 -- (247717) Primordial Direhorns, 9506009 the Crimson Primal Direhorn (248101), 9506010 the
 -- Palehide Direhorn (287779), 9506011 the Cobalt Primordial Direhorn (247716), 9506012 the
--- Zandalari Direhorn (283525), 9506013 the Golden Primal Direhorn (248100). The Tyrants that drop
--- Cobalt, Zandalari and Golden too keep doing so: a second way to get them.
+-- Zandalari Direhorn (283525), 9506013 the Golden Primal Direhorn (248100). They're the only
+-- source of these eight direhorns.
 -- visibilityDistanceType 3: seen from further away, like other large rares.
 DELETE FROM `creature_template` WHERE `entry` IN (9506002, 9506003, 9506004, 9506009, 9506010, 9506011, 9506012, 9506013);
 INSERT INTO `creature_template` (`entry`, `name`, `subname`, `minlevel`, `maxlevel`, `faction`, `speed_walk`, `speed_run`, `rank`, `DamageModifier`, `BaseAttackTime`, `RangeAttackTime`, `unit_class`, `unit_flags`, `unit_flags2`, `type`, `lootid`, `mingold`, `maxgold`, `AIName`, `HealthModifier`, `RegenHealth`) VALUES
@@ -498,11 +500,8 @@ INSERT INTO `creature_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `Q
 (9506012, 9506000, 9506000, 2.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Zandalari) - Primal Egg'),
 (9506013, 1963, 0, 100, 0, 1, 0, 60, 100, 'mod-primal-bones: Zandalari Warbringer (Golden) - Primal Bone'),
 (9506013, 9506000, 9506000, 2.4, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer (Golden) - Primal Egg'),
-(9506001, 400533, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (dark) - Cobalt Primordial Direhorn'),
-(9506005, 401038, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (blue) - Zandalari Direhorn'),
 (9506006, 400418, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (green) - Savage Raptor'),
 (9506007, 401180, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (pale) - Swift Albino Raptor'),
-(9506008, 400545, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Tarborn Tyrant (brown) - Golden Primal Direhorn'),
 (9506002, 400535, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Slate Primordial Direhorn'),
 (9506003, 400534, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Amber Primordial Direhorn'),
 (9506004, 400536, 0, 10, 0, 1, 0, 1, 1, 'mod-primal-bones: Zandalari Warbringer - Jade Primordial Direhorn'),
