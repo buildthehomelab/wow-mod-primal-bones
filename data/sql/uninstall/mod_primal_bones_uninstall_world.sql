@@ -47,6 +47,10 @@ UPDATE `item_template` SET `class` = 12, `subclass` = 0, `name` = 'NPC Equip 233
   `ItemLevel` = 0, `maxcount` = 0, `stackable` = 1, `bonding` = 0, `duration` = 0, `flagsCustom` = 0, `ScriptName` = '',
   `description` = ''
 WHERE `entry` = 23357;
+-- The Journal's notes on the raptors (the table is the journal's; created here only so this runs
+-- without it).
+CREATE TABLE IF NOT EXISTS `mod_forever_journal_collection_note` (`Kind` CHAR(1) NOT NULL, `ID` INT UNSIGNED NOT NULL, `Sort` TINYINT UNSIGNED NOT NULL DEFAULT 0, `Note` VARCHAR(200) NOT NULL, PRIMARY KEY (`Kind`,`ID`,`Sort`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+DELETE FROM `mod_forever_journal_collection_note` WHERE `Kind` = 'M' AND `ID` IN (400418, 400537, 400538, 400539, 400540, 401180) AND `Sort` = 50;
 UPDATE `item_template` SET `class` = 12, `subclass` = 0, `name` = 'NPC Equip 20798', `Quality` = 0, `Flags` = 0,
   `ItemLevel` = 0, `maxcount` = 0, `stackable` = 1, `bonding` = 0, `description` = ''
 WHERE `entry` = 20798;
