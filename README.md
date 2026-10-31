@@ -19,33 +19,32 @@ Raptor**.
   | Bones | Wares |
   | ----: | --- |
   | 9,999 | Bone-White Primal Raptor |
-  | 3,333 | Palehide Direhorn |
   | 500 | Zandalari Kneebiter, Anklerender, Footslasher, Toenibbler, Shinchomper, Baby Zandalari Raptor; Pygmy, Tiny or Stunted Direhorn |
   | 250 | Direhorn Hatchling, Diemetradon Hatchling |
 
   Everything is paid from the same pile, so a pet now means the white raptor later. A mount or
-  pet you already know drops off the list. The Red, Black and Green Primal Raptors aren't for
-  sale: they only hatch from Primal Eggs.
+  pet you already know drops off the list. The Red, Black and Green Primal Raptors, the Savage
+  Raptor and the Swift Albino Raptor aren't for sale: they only hatch from Primal Eggs. Nor are the direhorns: all eight colours drop from the
+  crater's rares.
 - **Primal Bones** drop from Un'Goro's beasts **only for players on his quest or who have done
   it**. Raptors, diemetradons and pterrordaxes drop 3-6, the tar elementals 2-4, stegodons and
   devilsaurs 15-25, and the crater's rares far more. That's roughly twelve hours of hunting for the
   full 9,999 alone, less in a group. Bones are soulbound and stack to 9,999.
-- **Primal Eggs** are how you get the Red, Black and Green Primal Raptors. Ju'zaro once sold
-  them for 3,333 bones, so an egg takes about as many kills as 3,333 bones: 1 in 740 beasts,
+- **Primal Eggs** are how you get the Red, Black and Green Primal Raptors, the Savage Raptor
+  and the Swift Albino Raptor. Ju'zaro once sold the primal ones for 3,333 bones, so an egg takes about as many kills as 3,333 bones: 1 in 740 beasts,
   1 in 1,100 tar elementals, 1 in 170 stegodons and devilsaurs (0.135%, 0.09%, 0.6%), and from the
   rares Ravasaur Matriarch 1.95%, Gruff 3.75%, King Mosh 6%, a Warbringer 2.4%, a Tyrant 6.75%.
   Again only for players on his quest or past it. An egg hatches **three days** later, offline
   time included, into a Hatched Primal Egg. Open it and it's always a primal raptor, one you don't
-  have yet. Once you have all three, an egg holds 25 Tarnished Undermine Reals (boss coins)
+  have yet. Once you have all five, an egg holds 25 Tarnished Undermine Reals (boss coins)
   instead.
 - **Tarborn Tyrants**, rare elite primal devilsaurs that claw their way out of the tar on one of
   three spots around the pits, three hours after the last one was killed. There are five, one for
-  each of retail's striped primal devilsaur skins, and whichever skin comes up drops its own
-  mount (10%): dark the Cobalt Primordial Direhorn, blue the Zandalari Direhorn, green the Savage
-  Raptor, pale the Swift Albino Raptor, brown the Golden Primal Direhorn. All ground mounts, like
-  the beasts that drop them. They fight like King Mosh and also drop 200-250 bones, and sometimes an egg.
-- **Zandalari Warbringers**: rare elite Zandalari riding a Slate, Amber or Jade Primordial
-  Direhorn or a Crimson Primal Direhorn. One is out at a time, on one of five spots across the
+  each of retail's striped primal devilsaur skins. They drop no mount: the direhorns are the
+  Warbringers' and the raptors hatch from eggs. They fight like King Mosh and also drop 200-250 bones, and sometimes an egg.
+- **Zandalari Warbringers**: rare elite Zandalari, eight of them, one for each colour of the
+  direhorn mount: Slate, Amber, Jade or Cobalt Primordial, Crimson or Golden Primal, Palehide or
+  Zandalari Direhorn. One is out at a time, on one of five spots across the
   crater; an hour after a kill another one rides in, in any colour at any spot. Each drops 60-100 bones, now and then an egg, and
   sometimes (10%) the direhorn it rides.
 - Both rares announce themselves to the whole crater when they appear.
@@ -55,7 +54,7 @@ Raptor**.
 - [wow-mod-retail-collection](https://github.com/buildthehomelab/wow-mod-retail-collection): the
   mounts and pets the shop sells and the rares and eggs drop are its items (400000+ and 410000+).
 - [wow-mod-boss-coins](https://github.com/buildthehomelab/wow-mod-boss-coins): its coin (item
-  90410) is what an egg holds once you have all three primal raptors. Without it those eggs are
+  90410) is what an egg holds once you have all five raptors. Without it those eggs are
   empty.
 - [wow-mod-retail-library](https://github.com/buildthehomelab/wow-mod-retail-library) and its
   client patches: the Warbringers ride its direhorn looks, and the Tarborn Tyrant wears its
@@ -64,7 +63,7 @@ Raptor**.
 - **The shop's prices in your client patch.** A price in items is an ItemExtendedCost row, and the
   client needs it too: without it the vendor window shows no price and won't buy.
   `tools/build_patch.py` copies the patch that carries your realm's `ItemExtendedCost.dbc` and adds
-  the module's four rows (90430-90433) at the end, leaving every other row and file as it was:
+  the module's three rows (90430, 90432 and 90433) at the end, leaving every other row and file as it was:
 
   ```bash
   python3 tools/build_patch.py --patch <your spell and item patch>.MPQ --out <new patch>.MPQ

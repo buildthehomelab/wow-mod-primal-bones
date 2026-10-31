@@ -10,11 +10,11 @@
  * The core calls the hook while the expired egg still takes up its bag slot, so a player whose
  * bags are otherwise full gets the hatched egg by mail instead of losing it.
  *
- * Every hatched egg is a Red, Black or Green Primal Raptor, and one its owner doesn't know yet:
- * the loot group's conditions can't steer that, the core rolls a group before it checks them. So
- * when the egg's loot is rolled, a known colour's chance goes to 0 and the others share 100%. An
- * owner who knows all three rolls none of them and gets the group's equal-chance entry, boss
- * coins.
+ * Every hatched egg is a Red, Black or Green Primal Raptor, a Savage Raptor or a Swift Albino
+ * Raptor, and one its owner doesn't know yet: the loot group's conditions can't steer that, the
+ * core rolls a group before it checks them. So when the egg's loot is rolled, a known raptor's
+ * chance goes to 0 and the others share 100%. An owner who knows all five rolls none of them and
+ * gets the group's equal-chance entry, boss coins.
  *
  * Released under the MIT License.
  */
@@ -36,8 +36,9 @@ namespace
     constexpr uint32 ITEM_HATCHED_PRIMAL_EGG = 20798;
     constexpr uint32 NPC_JUZARO = 9506000;
 
-    // Red, Black and Green Primal Raptor: each item teaches the mount spell with its own id.
-    constexpr uint32 EGG_RAPTORS[] = { 400538, 400539, 400540 };
+    // Red, Black and Green Primal Raptor, Savage Raptor, Swift Albino Raptor: each item teaches
+    // the mount spell with its own id.
+    constexpr uint32 EGG_RAPTORS[] = { 400538, 400539, 400540, 400418, 401180 };
 
     bool IsEggRaptor(uint32 itemId)
     {

@@ -22,8 +22,9 @@ import sys
 import tempfile
 
 BONE = 1963
-# ItemExtendedCost id: Primal Bones. 90430-90439 are this module's.
-COSTS = {90430: 9999, 90431: 3333, 90432: 500, 90433: 250}
+# ItemExtendedCost id: Primal Bones. 90430-90439 are this module's (90431, the Palehide
+# Direhorn's 3,333, is retired: it drops from a Warbringer now).
+COSTS = {90430: 9999, 90432: 500, 90433: 250}
 OWN_IDS = range(90430, 90440)
 TABLE = b"DBFilesClient\\ItemExtendedCost.dbc"
 # id, honor, arena points, arena bracket, 5 items, 5 counts, rating, purchase group
