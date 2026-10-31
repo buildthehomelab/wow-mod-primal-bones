@@ -44,8 +44,9 @@ Raptor**.
   mount (10%): dark the Cobalt Primordial Direhorn, blue the Zandalari Direhorn, green the Savage
   Raptor, pale the Swift Albino Raptor, brown the Golden Primal Direhorn. All ground mounts, like
   the beasts that drop them. They fight like King Mosh and also drop 200-250 bones, and sometimes an egg.
-- **Zandalari Warbringers**: rare elite Zandalari riding a Slate, Amber or Jade Primordial
-  Direhorn, a Crimson Primal Direhorn or a Palehide Direhorn. One is out at a time, on one of five spots across the
+- **Zandalari Warbringers**: rare elite Zandalari, eight of them, one for each colour of the
+  direhorn mount: Slate, Amber, Jade or Cobalt Primordial, Crimson or Golden Primal, Palehide or
+  Zandalari Direhorn. One is out at a time, on one of five spots across the
   crater; an hour after a kill another one rides in, in any colour at any spot. Each drops 60-100 bones, now and then an egg, and
   sometimes (10%) the direhorn it rides.
 - Both rares announce themselves to the whole crater when they appear.
